@@ -26,7 +26,8 @@ namespace Bxx\Abstraction\Protomodel {
                 $search=false,
                 $replace=''
             ) {
-            $arElement = $this->setFilter(['UF_XML_ID'=>$xml_id])->getElement();
+
+            $arElement = $this->getElement(['filter'=>['UF_XML_ID'=>$xml_id]]);
             
             if ($arElement['UF_STRING__'.$this->LANGUAGE_UID]) {
                 $str = $arElement['UF_STRING__'.$this->LANGUAGE_UID];

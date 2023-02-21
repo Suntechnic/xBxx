@@ -12,8 +12,8 @@ UF_XML_ID	Строка
 namespace Bxx\Abstraction\Protomodel {
     class Filestorage extends \Bxx\Abstraction\HLBModel {
         
-        public static function getInstance() {
-            return parent::getInstance(\Bxx\Helpers\HLBlocks::getEntityClassByCode('Filestorage'));
+        public static function getInstance(string $Code = 'Filestorage') {
+            return parent::getInstance($Code);
         }
         
         // возвращает src файла по xml_id
@@ -37,14 +37,6 @@ namespace Bxx\Abstraction\Protomodel {
         }
         #
         
-        // возвращает справочник элементов по указанному ключу
-        public function getReference ($key=false) {
-            $arList = parent::getDict($key);
-            foreach ($arList as $k=>$arElm) $arList[$k] = $this->__procElement($arElm);
-            return $arList;
-        }
-        #
-        
         //
         private function __procElement ($arElement) {
             $arElement['NAME'] = $arElement['UF_NAME'];
@@ -54,7 +46,7 @@ namespace Bxx\Abstraction\Protomodel {
             } else if ($arElement['UF_FILE']) {
                 $arElement['UF_FILE'] = \CFile::GetFileArray($arElement['UF_FILE']);
                 $arElement['SRC'] = $arElement['UF_FILE']['SRC'];
-                $arElement['S_SRC'] = S_.$arElement['SRC'];
+                $arElement['S_SRC'] = $_SERVER['DOCUMENT_ROOT'].$arElement['SRC'];
                 $size = intval($arElement['UF_FILE']['FILE_SIZE']);
                 
                 $arElement['SIZE'] = [

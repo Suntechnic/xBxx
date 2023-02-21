@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace Bxx
+namespace Bxx\Helpers
 {
     class IBlocks
     {
         public const DEFAULT_PATH = 'Bxx/IBlock';
         
-        public static function getByCode(string $code): int
+        public static function getIdByCode(string $code): int
         {
             $ref = self::refIdByCode();
             if ($ref[$code]) return $ref[$code];
