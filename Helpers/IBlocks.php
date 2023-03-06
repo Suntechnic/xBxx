@@ -30,7 +30,7 @@ namespace Bxx\Helpers
                 if ($cache->initCache(\App\Settings::getCacheTTL(), $cacheKey, self::DEFAULT_PATH)) {
                     $ref = $cache->getVars();
                 } elseif ($cache->startDataCache()) {
-                    
+                    \Bitrix\Main\Loader::includeModule('iblock');
                     $res = \CIBlock::GetList([], []);
                     while ($arIblock = $res->Fetch()) {
                         $ref[$arIblock['CODE']] = (int) $arIblock['ID'];
