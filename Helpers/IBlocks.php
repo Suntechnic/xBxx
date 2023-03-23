@@ -7,7 +7,6 @@ namespace Bxx\Helpers
     {
         public const DEFAULT_PATH = 'Bxx/IBlock';
         
-<<<<<<< HEAD
         /**
          * возвращает id инфоблока по его коду
          *
@@ -16,9 +15,6 @@ namespace Bxx\Helpers
          * @throws \Bitrix\Main\ObjectNotFoundException
          */
         public static function getIdByCode(string $code): int
-=======
-        public static function getIdByCode (string $code): int
->>>>>>> ef1041caf7b968c7ef507f6f293a2e8a0e6c6b3b
         {
             $ref = self::refIdByCode();
             if ($ref[$code]) return $ref[$code];
