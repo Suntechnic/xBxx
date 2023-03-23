@@ -7,21 +7,59 @@ namespace Bxx\Helpers
     {
         public const DEFAULT_PATH = 'Bxx/IBlock';
         
+        /**
+         * возвращает id инфоблока по его коду
+         *
+         * @param string $code - код инфоблока
+         * @return int
+         * @throws \Bitrix\Main\ObjectNotFoundException
+         */
         public static function getIdByCode(string $code): int
         {
             $ref = self::refIdByCode();
             if ($ref[$code]) return $ref[$code];
-            throw new IblockNotFoundException($code);
+
+            throw new \Bitrix\Main\ObjectNotFoundException('Инфоблок с кодом '.$code.' не существует');
         }
         
-        /*
-         * возвращает справочник хайлойдблоков
-        */
+
+
+
+        /**
+         * возвращает class d7 для инфоблока по его коду
+         *
+         * @param string $Code - код инфоблока
+         * @return string
+         * @throws \Bitrix\Main\ObjectNotFoundException
+         */
+        public static function getClassByCode (string $Code): string
+        {
+            if (!isset(self::$_memoizing['getClassByCode'][$Code])) {
+                $ref = self::refIdByCode();
+                if ($ref[$Code]) {
+                    self::$_memoizing['getClassByCode'][$Code]
+                             = \Bitrix\Iblock\Iblock::wakeUp($ref[$Code])->getEntityDataClass();
+                    return self::$_memoizing['getClassByCode'][$Code];
+                }
+            }
+
+
+            
+
+            throw new \Bitrix\Main\ObjectNotFoundException('Инфоблок с кодом '.$Code.' не существует');
+        }
+        
+        /**
+         * возвращает справочник инфоблоков
+         * 
+         * @return array - справочинк инфоблоков где ключом является код инфоблока
+         */
+
         private static $_memoizing = false;
         public static function refIdByCode (): array
         {
             
-            if (!self::$_memoizing) {
+            if (!self::$_memoizing['refIdByCode']) {
                 $cache = \Bitrix\Main\Data\Cache::createInstance();
     
                 $cacheKey = 'refIdByCode';
@@ -38,9 +76,9 @@ namespace Bxx\Helpers
                     
                     $cache->endDataCache($ref);
                 }
-                self::$_memoizing = $ref;
+                self::$_memoizing['refIdByCode'] = $ref;
             }
-            return self::$_memoizing;
+            return self::$_memoizing['refIdByCode'];
         }
     }
 }
