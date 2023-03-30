@@ -6,23 +6,42 @@ namespace Bxx\Helpers
     class IBlocks
     {
         public const DEFAULT_PATH = 'Bxx/IBlock';
+
+        private static $_memoizing = false;
         
         /**
          * возвращает id инфоблока по его коду
          *
-         * @param string $code - код инфоблока
+         * @param string $Code - код инфоблока
          * @return int
          * @throws \Bitrix\Main\ObjectNotFoundException
          */
-        public static function getIdByCode(string $code): int
+        public static function getIdByCode(string $Code): int
         {
             $ref = self::refIdByCode();
-            if ($ref[$code]) return $ref[$code];
+            if ($ref[$Code]) return $ref[$Code];
 
-            throw new \Bitrix\Main\ObjectNotFoundException('Инфоблок с кодом '.$code.' не существует');
+            throw new \Bitrix\Main\ObjectNotFoundException('Инфоблок с кодом '.$Code.' не существует');
         }
         
+        /**
+         * возвращает class d7 для инфоблока по его коду
+         *
+         * @param string $Code - код инфоблока
+         * @return string
+         * @throws \Bitrix\Main\ObjectNotFoundException
+         */
+        public static function getElementUrlTemplateByCode (string $Code): string
+        {
+            if (!is_array(self::$_memoizing['getUrlTemplateCode']) 
+                    || !array_key_exists($Code,self::$_memoizing['getUrlTemplateCode'])
+                ) {
+                $ref = array_column(self::getList(),'DETAIL_PAGE_URL','CODE');
 
+                self::$_memoizing['getUrlTemplateCode'][$Code] = $ref[$Code];
+            }
+            return self::$_memoizing['getUrlTemplateCode'][$Code];
+        }
 
 
         /**
@@ -36,17 +55,16 @@ namespace Bxx\Helpers
         {
             if (!isset(self::$_memoizing['getClassByCode'][$Code])) {
                 $ref = self::refIdByCode();
+
                 if ($ref[$Code]) {
                     self::$_memoizing['getClassByCode'][$Code]
-                             = \Bitrix\Iblock\Iblock::wakeUp($ref[$Code])->getEntityDataClass();
-                    return self::$_memoizing['getClassByCode'][$Code];
+                            = \Bitrix\Iblock\Iblock::wakeUp($ref[$Code])->getEntityDataClass();
+                } else {
+                    throw new \Bitrix\Main\ObjectNotFoundException('Инфоблок с кодом '.$Code.' не существует');
                 }
             }
 
-
-            
-
-            throw new \Bitrix\Main\ObjectNotFoundException('Инфоблок с кодом '.$Code.' не существует');
+            return self::$_memoizing['getClassByCode'][$Code];
         }
         
         /**
@@ -54,31 +72,41 @@ namespace Bxx\Helpers
          * 
          * @return array - справочинк инфоблоков где ключом является код инфоблока
          */
-
-        private static $_memoizing = false;
         public static function refIdByCode (): array
         {
-            
             if (!self::$_memoizing['refIdByCode']) {
-                $cache = \Bitrix\Main\Data\Cache::createInstance();
-    
-                $cacheKey = 'refIdByCode';
-        
-                $ref = [];
-                if ($cache->initCache(\App\Settings::getCacheTTL(), $cacheKey, self::DEFAULT_PATH)) {
-                    $ref = $cache->getVars();
-                } elseif ($cache->startDataCache()) {
-                    \Bitrix\Main\Loader::includeModule('iblock');
-                    $res = \CIBlock::GetList([], []);
-                    while ($arIblock = $res->Fetch()) {
-                        $ref[$arIblock['CODE']] = (int) $arIblock['ID'];
-                    }
-                    
-                    $cache->endDataCache($ref);
-                }
+                $ref = array_column(self::getList(),'ID','CODE');
                 self::$_memoizing['refIdByCode'] = $ref;
             }
             return self::$_memoizing['refIdByCode'];
+        }
+        
+
+        public static function getList (): array
+        {
+
+            $cache = \Bitrix\Main\Data\Cache::createInstance();
+            $cacheKey = 'getList';
+
+            $lst = [];
+            if ($cache->initCache(\App\Settings::getCacheTTL(), $cacheKey, self::DEFAULT_PATH)) {
+                $lst = $cache->getVars();
+            } elseif ($cache->startDataCache()) {
+                \Bitrix\Main\Loader::includeModule('iblock');
+                $res = \CIBlock::GetList([], []);
+                while ($arIblock = $res->Fetch()) {
+                    $lst[$arIblock['CODE']] = [
+                            'ID' => $arIblock['ID'],
+                            'CODE' => $arIblock['CODE'],
+                            'DETAIL_PAGE_URL' => $arIblock['DETAIL_PAGE_URL'],
+                            'SECTION_PAGE_URL' => $arIblock['SECTION_PAGE_URL'],
+                            'VERSION' => $arIblock['VERSION'],
+                        ];
+                }
+                $cache->endDataCache($lst);
+            }
+
+            return $lst;
         }
     }
 }
