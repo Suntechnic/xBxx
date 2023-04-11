@@ -19,7 +19,7 @@ namespace Bxx\Helpers
         public static function getIdByCode(string $Code): int
         {
             $ref = self::refIdByCode();
-            if ($ref[$Code]) return $ref[$Code];
+            if ($ref[$Code]) return intval($ref[$Code]);
 
             throw new \Bitrix\Main\ObjectNotFoundException('Инфоблок с кодом '.$Code.' не существует');
         }
