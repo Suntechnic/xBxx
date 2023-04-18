@@ -20,7 +20,7 @@ namespace Bxx\Helpers
         {
             $ref = self::refIdByCode();
             if ($ref[$Code]) return intval($ref[$Code]);
-
+            
             $ref = self::refIdByCode(true);
             if ($ref[$Code]) return intval($ref[$Code]);
 
