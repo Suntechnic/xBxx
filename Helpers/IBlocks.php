@@ -19,7 +19,10 @@ namespace Bxx\Helpers
         public static function getIdByCode(string $Code): int
         {
             $ref = self::refIdByCode();
-            if ($ref[$Code]) return $ref[$Code];
+            if ($ref[$Code]) return intval($ref[$Code]);
+
+            $ref = self::refIdByCode(true);
+            if ($ref[$Code]) return intval($ref[$Code]);
 
             throw new \Bitrix\Main\ObjectNotFoundException('Инфоблок с кодом '.$Code.' не существует');
         }
@@ -72,26 +75,27 @@ namespace Bxx\Helpers
          * 
          * @return array - справочинк инфоблоков где ключом является код инфоблока
          */
-        public static function refIdByCode (): array
+        public static function refIdByCode (bool $DropCache=false): array
         {
-            if (!self::$_memoizing['refIdByCode']) {
-                $ref = array_column(self::getList(),'ID','CODE');
+            if (!self::$_memoizing['refIdByCode'] || $DropCache) {
+                $ref = array_column(self::getList($DropCache),'ID','CODE');
                 self::$_memoizing['refIdByCode'] = $ref;
             }
             return self::$_memoizing['refIdByCode'];
         }
         
 
-        public static function getList (): array
+        public static function getList (bool $DropCache=false): array
         {
 
             $cache = \Bitrix\Main\Data\Cache::createInstance();
             $cacheKey = 'getList';
 
             $lst = [];
-            if ($cache->initCache(\App\Settings::getCacheTTL(), $cacheKey, self::DEFAULT_PATH)) {
+            
+            if ($cache->initCache(\App\Settings::getCacheTTL(), $cacheKey, self::DEFAULT_PATH) && !$DropCache) {
                 $lst = $cache->getVars();
-            } elseif ($cache->startDataCache()) {
+            } elseif ($cache->startDataCache() || $DropCache) {
                 \Bitrix\Main\Loader::includeModule('iblock');
                 $res = \CIBlock::GetList([], []);
                 while ($arIblock = $res->Fetch()) {
