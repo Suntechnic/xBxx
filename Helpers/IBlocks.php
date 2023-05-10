@@ -8,6 +8,7 @@ namespace Bxx\Helpers
         public const DEFAULT_PATH = 'Bxx/IBlock';
 
         private static $_memoizing = false;
+
         
         /**
          * возвращает id инфоблока по его коду
@@ -87,7 +88,6 @@ namespace Bxx\Helpers
 
         public static function getList (bool $DropCache=false): array
         {
-
             $cache = \Bitrix\Main\Data\Cache::createInstance();
             $cacheKey = 'getList';
 
@@ -99,7 +99,7 @@ namespace Bxx\Helpers
                 \Bitrix\Main\Loader::includeModule('iblock');
                 $res = \CIBlock::GetList([], []);
                 while ($arIblock = $res->Fetch()) {
-                    $lst[$arIblock['CODE']] = [
+                    $lst[] = [
                             'ID' => $arIblock['ID'],
                             'CODE' => $arIblock['CODE'],
                             'DETAIL_PAGE_URL' => $arIblock['DETAIL_PAGE_URL'],
