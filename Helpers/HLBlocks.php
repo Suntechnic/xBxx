@@ -51,8 +51,7 @@ namespace Bxx\Helpers
                 $class = $entity->getDataClass();
                 return $class;
             }
-    
-            throw new HlBlockNotFoundException(print_r($dctFilter, true));
+            throw new \Bitrix\Main\ObjectNotFoundException(print_r($dctFilter, true));
         }
     }
 }

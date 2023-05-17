@@ -58,7 +58,9 @@ namespace Bxx\Helpers
         public static function getClassByCode (string $Code): string
         {
             if (!isset(self::$_memoizing['getClassByCode'][$Code])) {
+                
                 $ref = self::refIdByCode();
+                if (!$ref[$Code]) $ref = self::refIdByCode(true);
 
                 if ($ref[$Code]) {
                     self::$_memoizing['getClassByCode'][$Code]
