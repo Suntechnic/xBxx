@@ -11,27 +11,46 @@ namespace Bxx\Helpers
         /**
          * Возращает класс по коду
          */
-        public static function getEntityClassByCode (string $code)
+        public static function getEntityClassByCode (string $Code)
         {
-            if (!isset(self::$_memoizing['getEntityClassByCode'][$code])) {
-                self::$_memoizing['getEntityClassByCode'][$code] = self::getEntityClass([
-                        'NAME' => $code
+            if (!isset(self::$_memoizing['getEntityClassByCode'][$Code])) {
+                self::$_memoizing['getEntityClassByCode'][$Code] = self::getEntityClass([
+                        'NAME' => $Code
                     ]);
             }
-            return self::$_memoizing['getEntityClassByCode'][$code];
+            return self::$_memoizing['getEntityClassByCode'][$Code];
         }
         
         /**
          * Возращает класс по имени таблицы
          */
-        public static function getEntityClassByTable (string $table): string
+        public static function getEntityClassByTable (string $Table): string
         {
-            if (!isset(self::$_memoizing['getEntityClassByCode'][$table])) {
-                self::$_memoizing['getEntityClassByCode'][$table] = self::getEntityClass([
-                        'TABLE_NAME' => $table
+            if (!isset(self::$_memoizing['getEntityClassByCode'][$Table])) {
+                self::$_memoizing['getEntityClassByCode'][$Table] = self::getEntityClass([
+                        'TABLE_NAME' => $Table
                     ]);
             }
-            return self::$_memoizing['getEntityClassByCode'][$table];
+            return self::$_memoizing['getEntityClassByCode'][$Table];
+        }
+
+        /**
+         * Возращает id по коду
+         */
+        public static function getIdByCode (string $Code): string
+        {
+            if (!isset(self::$_memoizing['getIdByCode'][$Code])) {
+                \Bitrix\Main\Loader::includeModule('highloadblock');
+                $res = \Bitrix\Highloadblock\HighloadBlockTable::getList([
+                        'filter' => ['NAME' => $Code]
+                    ]);
+                if ($dctHLBlockData = $res->fetch()) {
+                    self::$_memoizing['getIdByCode'][$Code] = $dctHLBlockData['ID'];
+                } else {
+                    throw new \Bitrix\Main\ObjectNotFoundException('Не найден hl-блок с кодом '.$Code);
+                }
+            }
+            return self::$_memoizing['getIdByCode'][$Code];
         }
         
         /**
@@ -45,9 +64,9 @@ namespace Bxx\Helpers
             $res = \Bitrix\Highloadblock\HighloadBlockTable::getList([
                     'filter' => $dctFilter
                 ]);
-            if ($hlBlockData = $res->fetch()) {
-                //$hlBlock = \Bitrix\Highloadblock\HighloadBlockTable::getById($hlBlockData['ID'])->fetch();
-                $entity = \Bitrix\Highloadblock\HighloadBlockTable::compileEntity($hlBlockData);
+            if ($dctHLBlockData = $res->fetch()) {
+                //$hlBlock = \Bitrix\Highloadblock\HighloadBlockTable::getById($dctHLBlockData['ID'])->fetch();
+                $entity = \Bitrix\Highloadblock\HighloadBlockTable::compileEntity($dctHLBlockData);
                 $class = $entity->getDataClass();
                 return $class;
             }

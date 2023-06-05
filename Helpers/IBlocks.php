@@ -63,6 +63,7 @@ namespace Bxx\Helpers
                 if (!$ref[$Code]) $ref = self::refIdByCode(true);
 
                 if ($ref[$Code]) {
+                    \Bitrix\Main\Loader::includeModule('iblock');
                     self::$_memoizing['getClassByCode'][$Code]
                             = \Bitrix\Iblock\Iblock::wakeUp($ref[$Code])->getEntityDataClass();
                 } else {
