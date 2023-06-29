@@ -5,7 +5,7 @@ namespace Bxx\Helpers
 {
     class IBlocks
     {
-        public const DEFAULT_PATH = 'Bxx/IBlock';
+        public const DEFAULT_PATH = 'Bxx/IBlocks';
 
         private static $_memoizing = false;
 
@@ -92,11 +92,14 @@ namespace Bxx\Helpers
         public static function getList (bool $DropCache=false): array
         {
             $cache = \Bitrix\Main\Data\Cache::createInstance();
-            $cacheKey = 'getList';
+            $CacheKey = 'getList';
+            if (defined('APPLICATION_ENV') && APPLICATION_ENV == 'dev') {
+                $CacheTTL = 0;
+            } else $CacheTTL = \App\Settings::getCacheTTL();
 
             $lst = [];
             
-            if ($cache->initCache(\App\Settings::getCacheTTL(), $cacheKey, self::DEFAULT_PATH) && !$DropCache) {
+            if ($cache->initCache($CacheTTL, $CacheKey, self::DEFAULT_PATH) && !$DropCache) {
                 $lst = $cache->getVars();
             } elseif ($cache->startDataCache() || $DropCache) {
                 \Bitrix\Main\Loader::includeModule('iblock');
