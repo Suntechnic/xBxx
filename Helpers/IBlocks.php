@@ -61,7 +61,7 @@ namespace Bxx\Helpers
                 
                 $ref = self::refIdByCode();
                 if (!$ref[$Code]) $ref = self::refIdByCode(true);
-
+                
                 if ($ref[$Code]) {
                     \Bitrix\Main\Loader::includeModule('iblock');
                     self::$_memoizing['getClassByCode'][$Code]
