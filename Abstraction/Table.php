@@ -1,4 +1,8 @@
 <?
+/*
+см. orm в матрасах
+*/
+
 namespace Bxx;
 {
     abstract class Table extends \Bitrix\Main\Entity\DataManager
