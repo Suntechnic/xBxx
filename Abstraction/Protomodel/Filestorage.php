@@ -39,6 +39,7 @@ namespace Bxx\Abstraction\Protomodel {
         
         //
         private function __procElement ($arElement) {
+            if (!$arElement) return false;
             $arElement['NAME'] = $arElement['UF_NAME'];
             // файл и ссылка
             if ($arElement['UF_URL']) {
