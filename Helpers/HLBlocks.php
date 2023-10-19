@@ -34,6 +34,22 @@ namespace Bxx\Helpers
             return self::$_memoizing['getEntityClassByCode'][$Table];
         }
 
+
+        /**
+         * Возращает код по имени таблицы
+         */
+        public static function getCodeByTable (string $Table): string
+        {
+            if (!isset(self::$_memoizing['getCodeByTable'][$Table])) {
+                $dctHLBlockData = self::getHLBlockData([
+                        'TABLE_NAME' => $Table
+                    ]);
+                self::$_memoizing['getCodeByTable'][$Table] = $dctHLBlockData['NAME'];
+            }
+            return self::$_memoizing['getCodeByTable'][$Table];
+        }
+
+
         /**
          * Возращает id по коду
          */
@@ -61,15 +77,26 @@ namespace Bxx\Helpers
         public static function getEntityClass (array $dctFilter): string
         {
             \Bitrix\Main\Loader::includeModule('highloadblock');
+            $dctHLBlockData = self::getHLBlockData($dctFilter);
+
+            //$hlBlock = \Bitrix\Highloadblock\HighloadBlockTable::getById($dctHLBlockData['ID'])->fetch();
+            $entity = \Bitrix\Highloadblock\HighloadBlockTable::compileEntity($dctHLBlockData);
+            $class = $entity->getDataClass();
+            return $class;
+        }
+
+        /**
+         * Возращает класс по фильтру
+         * !!! (метод без мемоизации)
+         * 
+         */
+        public static function getHLBlockData (array $dctFilter): array
+        {
+            \Bitrix\Main\Loader::includeModule('highloadblock');
             $res = \Bitrix\Highloadblock\HighloadBlockTable::getList([
                     'filter' => $dctFilter
                 ]);
-            if ($dctHLBlockData = $res->fetch()) {
-                //$hlBlock = \Bitrix\Highloadblock\HighloadBlockTable::getById($dctHLBlockData['ID'])->fetch();
-                $entity = \Bitrix\Highloadblock\HighloadBlockTable::compileEntity($dctHLBlockData);
-                $class = $entity->getDataClass();
-                return $class;
-            }
+            if ($dctHLBlockData = $res->fetch()) return $dctHLBlockData;
             throw new \Bitrix\Main\ObjectNotFoundException(print_r($dctFilter, true));
         }
     }
