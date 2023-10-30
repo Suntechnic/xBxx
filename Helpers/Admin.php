@@ -10,7 +10,7 @@ namespace Bxx\Helpers
         
 
         /**
-         * очищает массив значений битрикс от муссорных ключей
+         * возвращает true если выполнение идет в PHP-командной строке
          */
         public static function isAdminCommandLine (): bool
         {
