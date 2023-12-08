@@ -21,22 +21,30 @@ namespace Bxx\Abstraction\Protomodel {
         }
         
         // возвращает Значение строки по коду
+        private $_memoizing = [];
         public function getStringVal (
-                $xml_id,
+                $XmlId,
                 $search=false,
                 $replace=''
             ) {
 
-            $arElement = $this->getElement(['filter'=>['UF_XML_ID'=>$xml_id]]);
-            
-            if ($arElement['UF_STRING__'.$this->LANGUAGE_UID]) {
-                $str = $arElement['UF_STRING__'.$this->LANGUAGE_UID];
+            if ($this->_memoizing[$XmlId]) {
+                $Str = $this->_memoizing[$XmlId];
             } else {
-                $str = $arElement['UF_STRING'];
+                $arElement = $this->getElement(['filter'=>['UF_XML_ID'=>$XmlId]]);
+                
+                if ($arElement['UF_STRING__'.$this->LANGUAGE_UID]) {
+                    $Str = $arElement['UF_STRING__'.$this->LANGUAGE_UID];
+                } else {
+                    $Str = $arElement['UF_STRING'];
+                }
+
+                $this->_memoizing[$XmlId] = $Str;
             }
+
             
-            if ($search) $str = str_replace($search,$replace,$str);
-            return $str;
+            if ($search) $Str = str_replace($search,$replace,$Str);
+            return $Str;
         }
         #
         
