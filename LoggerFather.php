@@ -21,13 +21,13 @@ class LoggerFather {
     private const LOGSIZE = 4096;
 
     // возвращает логгер
-    public static function get (string $Name): \Bitrix\Main\Diag\FileLogger
+    public function get (string $Name): \Bitrix\Main\Diag\FileLogger
     {
-
         if (!$this->refLoggers[$Name]) {
+            $LogPath = $this->getLogDirPath().$Name.$this->LogExt;
             $logger = new \Bitrix\Main\Diag\FileLogger(
-                    $this->LogDirPath.$Name.$this->LogExt,
-                    $LogSize
+                    $LogPath,
+                    $this->LogSize
                 );
             if ($this->LevelDefault) $logger->setLevel($this->LevelDefault);
 
@@ -37,9 +37,15 @@ class LoggerFather {
         return $this->refLoggers[$Name];
     }
 
-    public static function setLevelDefault ($Level)
+    public function setLevelDefault ($Level)
     {
         return $this->LevelDefault = $Level;
+    }
+
+
+    public function getLogDirPath (): string
+    {
+        return $this->LogDirPath;
     }
 
 
@@ -62,7 +68,7 @@ class LoggerFather {
     protected function __construct ()
     {
         $this->LogDir   = self::LOGDIR;
-        $this->LogExt   = self::LOGDIR;
+        $this->LogExt   = self::LOGEXT;
         $this->LogSize  = self::LOGSIZE;
 
         if (APPLICATION_ENV == 'dev') {
@@ -72,7 +78,6 @@ class LoggerFather {
         }
 
         // тут считывание параметров
-
-        $this->LogDirPath = \Bitrix\Main\Application::getDocumentRoot().$LogDir;
+        $this->LogDirPath = \Bitrix\Main\Application::getDocumentRoot().$this->LogDir;
     }
 }
