@@ -12,7 +12,7 @@ namespace Bxx\Helpers
         
         /**
          * возвращает id инфоблока по его коду
-         *
+         * \Bxx\Helpers\IBlocks::getIdByCode('code');
          * @param string $Code - код инфоблока
          * @return int
          * @throws \Bitrix\Main\ObjectNotFoundException
