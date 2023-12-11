@@ -25,6 +25,10 @@ class LoggerFather {
     {
         if (!$this->refLoggers[$Name]) {
             $LogPath = $this->getLogDirPath().$Name.$this->LogExt;
+            $LogDirPath = dirname($LogPath);
+            if (!\Bitrix\Main\IO\Directory::isDirectoryExists($LogDirPath)) {
+                \Bitrix\Main\IO\Directory::createDirectory($LogDirPath);
+            }
             $logger = new \Bitrix\Main\Diag\FileLogger(
                     $LogPath,
                     $this->LogSize
