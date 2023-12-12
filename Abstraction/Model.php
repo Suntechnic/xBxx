@@ -30,18 +30,18 @@ namespace Bxx\Abstraction {
             // предустановка свойств
             $this->cDir = '/Bxx/Abstraction/Model/'.$this::MODEL.'_'.$uid;
             if (!$this->cTime) {
-			$shiftCache = strlen($uid)*10 + intval($uid);
-			// время кэширования по умолчанию
-	                $this->cTime = 86399;
-	                if (class_exists('\App\Settings'))
-				        $this->cTime = \App\Settings::getCacheTTL() + $shiftCache;
-		}
-		if (!$this->cTimes) $this->cTimes = []; // расчитанное время кэширования по методам
-		$this->cTimes['*'] = $this->cTime;
-		if (!$this->cMultiplex) $this->cMultiplex = 11;
-		if (!$this->cTimes['long']) $this->cTimes['long'] = $this->cTime*$this->cMultiplex;
-		
-		return $this;
+                $shiftCache = strlen($uid)*10 + intval($uid);
+                // время кэширования по умолчанию
+                $this->cTime = 86399;
+                if (class_exists('\App\Settings'))
+                        $this->cTime = \App\Settings::getCacheTTL() + $shiftCache;
+            }
+        if (!$this->cTimes) $this->cTimes = []; // расчитанное время кэширования по методам
+        $this->cTimes['*'] = $this->cTime;
+        if (!$this->cMultiplex) $this->cMultiplex = 11;
+        if (!$this->cTimes['long']) $this->cTimes['long'] = $this->cTime*$this->cMultiplex;
+        
+        return $this;
         }
         
         protected final function __clone() {}
@@ -49,9 +49,9 @@ namespace Bxx\Abstraction {
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         
         
-		
-		
-		/* возвращает время кэширования для метода
+        
+        
+        /* возвращает время кэширования для метода
          * или устанавливает для каждого метода отдельно
          * или устанавливает базовое время если метод указан как *
          * $method - имя метода для которого надо установить/вернуть время кэширования
@@ -103,46 +103,12 @@ namespace Bxx\Abstraction {
          */
         public function getParams (array &$arParams): array
         {
-			return $arParams;
-		}
+            return $arParams;
+        }
         
         
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-		/*
+        /*
          * Возращает фильтр для getList
          * и сбрасывает одноразовый фильтр
          */
@@ -156,17 +122,17 @@ namespace Bxx\Abstraction {
             
             return $arFilter;
         }
-		protected function __getFilter () {
-			$arFilter = $this->getFilter();
+        protected function __getFilter () {
+            $arFilter = $this->getFilter();
             //$this->lastFilter = $arFilter;
             return $arFilter;
-		}
-		
-		/*
+        }
+        
+        /*
          * Возращает селект для getList
          * и сбрасывает одноразовый селект
          */
-		public function getSelect () {
+        public function getSelect () {
             if (isset($this->disposableParams['select'])) {
                 $arSelect = $this->disposableParams['select'];
                 unset($this->disposableParams['select']);
@@ -180,12 +146,12 @@ namespace Bxx\Abstraction {
             //$this->lastSelect = $arSelect;
             return $arSelect;
         }
-		
-		/*
+        
+        /*
          * Возращает сортировку для getList
          * и сбрасывает одноразовую сортировку
          */
-		public function getOrder () {
+        public function getOrder () {
             if (isset($this->disposableParams['order'])) {
                 $arOrder = $this->disposableParams['order'];
                 unset($this->disposableParams['order']);
@@ -199,8 +165,8 @@ namespace Bxx\Abstraction {
             //$this->lastOrder = $arOrder;
             return $arOrder;
         }
-		
-		public function resetSelect () {
+        
+        public function resetSelect () {
             if ($this->_Select) $this->Select=$this->_Select;
             unset($this->disposableParams['select']);
             return $this;
@@ -219,9 +185,9 @@ namespace Bxx\Abstraction {
         public function add2Filter ($arFilter) {$this->Filter=array_merge($this->Filter,$arFilter); return $this;}
         public function add2Select ($arSelect) {$this->Select=array_merge($this->Select,$arSelect); return $this;}
         public function add2Order ($arOrder) {$this->Order=array_merge($this->Order,$arOrder); return $this;}
-		
-		
-		/*
+        
+        
+        /*
          * Устанавливает одноразове параметры сортировки фильтрации и выбора
          * которые будут сброшены после одного использования
          */
@@ -232,7 +198,7 @@ namespace Bxx\Abstraction {
             if ($arParams['select']) $this->disposableParams['select']=$arParams['select'];
             return $this;
         }
-		
-		
+        
+        
     }
 }
