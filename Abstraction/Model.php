@@ -30,15 +30,18 @@ namespace Bxx\Abstraction {
             // предустановка свойств
             $this->cDir = '/Bxx/Abstraction/Model/'.$this::MODEL.'_'.$uid;
             if (!$this->cTime) {
-				$shiftCache = strlen($uid)*10 + intval($uid);
-				$this->cTime = \App\Settings::getCacheTTL() + $shiftCache; // время кэширования по умолчанию
-			}
-			if (!$this->cTimes) $this->cTimes = []; // расчитанное время кэширования по методам
-			$this->cTimes['*'] = $this->cTime;
-			if (!$this->cMultiplex) $this->cMultiplex = 11;
-			if (!$this->cTimes['long']) $this->cTimes['long'] = $this->cTime*$this->cMultiplex;
-			
-			return $this;
+			$shiftCache = strlen($uid)*10 + intval($uid);
+			// время кэширования по умолчанию
+	                $this->cTime = 86399;
+	                if (class_exists('\App\Settings'))
+				        $this->cTime = \App\Settings::getCacheTTL() + $shiftCache;
+		}
+		if (!$this->cTimes) $this->cTimes = []; // расчитанное время кэширования по методам
+		$this->cTimes['*'] = $this->cTime;
+		if (!$this->cMultiplex) $this->cMultiplex = 11;
+		if (!$this->cTimes['long']) $this->cTimes['long'] = $this->cTime*$this->cMultiplex;
+		
+		return $this;
         }
         
         protected final function __clone() {}
