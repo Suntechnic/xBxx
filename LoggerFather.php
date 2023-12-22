@@ -18,7 +18,7 @@ class LoggerFather {
 
     private const LOGDIR = '/local/.logs/';
     private const LOGEXT = '.log.txt';
-    private const LOGSIZE = 4096;
+    private const LOGSIZE = 32768;
 
     // возвращает логгер
     public function get (string $Name): \Bitrix\Main\Diag\FileLogger
