@@ -5,8 +5,12 @@ namespace Bxx\Helpers\IBlocks
 {
     class Properties
     {
-        public const DEFAULT_PATH = 'Bxx/IBlocks/Properties';
+        public const DEFAULT_CACHE_PATH = 'Bxx/IBlocks/Properties';
 
+        /**
+         * справочник свойст Enum
+         * 
+         */
         public static function getEnumReference (int $IBlockId): array
         {
             $cache = \Bitrix\Main\Data\Cache::createInstance();
@@ -18,7 +22,7 @@ namespace Bxx\Helpers\IBlocks
 
             $refProps = [];
 
-            if ($cache->initCache($CacheTTL, $CacheKey, self::DEFAULT_PATH)) {
+            if ($cache->initCache($CacheTTL, $CacheKey, self::DEFAULT_CACHE_PATH)) {
                 $refProps = $cache->getVars();
             } elseif ($cache->startDataCache()) {
                 $rdbEnumProps = \Bitrix\Iblock\PropertyTable::getList([
