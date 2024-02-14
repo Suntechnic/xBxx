@@ -8,6 +8,18 @@ namespace Bxx\Helpers
     */
     class Routs
     {
+        /**
+         * Возрващает маршрут по имени
+         */
+        public static function getRoute (string $Name): array
+        {
+            $router = \Bitrix\Main\Application::getInstance()->getRouter();
+            foreach ($router->getRoutes() as $route) {
+                if ($optionsRoute->getFullName() == $Name) {
+                    return $route
+                }
+            }
+        }
         
 
         /**
