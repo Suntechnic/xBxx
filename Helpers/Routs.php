@@ -55,7 +55,7 @@ namespace Bxx\Helpers
         }
 
         /**
-         * Возрващает справочник маршрутов проекта относительно текущей позиции
+         * Возрващает true, если маршрут соответствует текущему
          */
         public static function isCurrent (\Bitrix\Main\Routing\Route $route): bool
         {
