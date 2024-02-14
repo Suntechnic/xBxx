@@ -11,7 +11,7 @@ namespace Bxx\Helpers
         /**
          * Возрващает маршрут по имени
          */
-        public static function getRoute (string $Name): array
+        public static function getRoute (string $Name): \Bitrix\Main\Routing\Route
         {
             $router = \Bitrix\Main\Application::getInstance()->getRouter();
             foreach ($router->getRoutes() as $route) {
