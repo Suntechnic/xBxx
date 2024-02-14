@@ -19,6 +19,7 @@ namespace Bxx\Helpers
                     return $route
                 }
             }
+            throw new \Bitrix\Main\ObjectNotFoundException('Маршрут с именем '.$Name.' не найден');
         }
         
 
