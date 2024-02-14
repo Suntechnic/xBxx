@@ -15,6 +15,7 @@ namespace Bxx\Helpers
         {
             $router = \Bitrix\Main\Application::getInstance()->getRouter();
             foreach ($router->getRoutes() as $route) {
+                $optionsRoute = $route->getOptions();
                 if ($optionsRoute->getFullName() == $Name) {
                     return $route;
                 }
