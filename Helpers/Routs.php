@@ -16,7 +16,7 @@ namespace Bxx\Helpers
             $router = \Bitrix\Main\Application::getInstance()->getRouter();
             foreach ($router->getRoutes() as $route) {
                 if ($optionsRoute->getFullName() == $Name) {
-                    return $route
+                    return $route;
                 }
             }
             throw new \Bitrix\Main\ObjectNotFoundException('Маршрут с именем '.$Name.' не найден');
