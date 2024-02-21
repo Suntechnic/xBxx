@@ -27,13 +27,19 @@ namespace Bxx\Abstraction {
         
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         
-        protected $hlblock;
-        protected $entity;
-        protected $entity_data_class;
+        protected $EntityClass;
+
+        // возвращает класс
+        public function getEntityClass()
+        {
+            return $this->EntityClass;
+        }
+        #
         
         // возвращает ID инфоблока
-        public function getId() {
-            return $this->ID;
+        public function getId(): int
+        {
+            return intval($this->ID);
         }
         #
         
