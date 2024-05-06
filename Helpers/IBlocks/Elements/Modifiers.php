@@ -16,11 +16,16 @@ namespace Bxx\Helpers\IBlocks\Elements
             /**
              * параметры по умолчания
              */
-            if ($dctElement['PREVIEW_PICTURE']) $dctElement['PREVIEW_PICTURE'] = \CFile::GetFileArray($dctElement['PREVIEW_PICTURE']);
-            if ($dctElement['DETAIL_PICTURE']) $dctElement['DETAIL_PICTURE'] = \CFile::GetFileArray($dctElement['DETAIL_PICTURE']);
+            if ($dctElement['PREVIEW_PICTURE'] 
+                    && !is_array($dctElement['PREVIEW_PICTURE'])
+                ) $dctElement['PREVIEW_PICTURE'] = \CFile::GetFileArray($dctElement['PREVIEW_PICTURE']);
+            if ($dctElement['DETAIL_PICTURE']
+                    && !is_array($dctElement['DETAIL_PICTURE'])
+                ) $dctElement['DETAIL_PICTURE'] = \CFile::GetFileArray($dctElement['DETAIL_PICTURE']);
             
             return $dctElement;
         }
+        
         /**
          * датирует элемент на основе данных в массиве
          */

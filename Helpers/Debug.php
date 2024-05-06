@@ -31,7 +31,7 @@ namespace Bxx\Helpers
                 if (!isset($_SERVER['RUNTIME_ERRORS'])) {
                     $_SERVER['RUNTIME_ERRORS'] = [$mixError];
                 } else {
-                    $_SERVER['RUNTIME_ERRORS'] = [$mixError];
+                    $_SERVER['RUNTIME_ERRORS'][] = $mixError;
                 }
             }
             return count($_SERVER['RUNTIME_ERRORS']);
