@@ -55,7 +55,8 @@ namespace Bxx\Helpers\IBlocks
                                 'ID',
                                 'PROPERTY_ID',
                                 'VALUE',
-                                'XML_ID'
+                                'XML_ID',
+                                'SORT'
                             ],
                         'order' => [
                                 'SORT' => 'ASC',
