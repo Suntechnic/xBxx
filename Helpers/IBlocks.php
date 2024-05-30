@@ -9,7 +9,25 @@ namespace Bxx\Helpers
 
         private static $_memoizing = false;
 
-        
+        /**
+         * возвращает id инфоблока по id его элемента
+         * \Bxx\Helpers\IBlocks::getIdByElementId($id);
+         * @param int $ElementId - id элемента инфоблока
+         * @return int
+         * @throws \Bitrix\Main\ObjectNotFoundException
+         */
+        public static function getIdByElementId (int $ElementId): int
+        {
+            $dctElement = \Bitrix\Iblock\ElementTable::getList([
+                    'select' => ['ID','IBLOCK_ID'],
+                    'filter' => ['ID' => $ElementId]
+                ])->fetch();
+            
+            if ($dctElement && $dctElement['ID'] == $ElementId) return intval($dctElement['IBLOCK_ID']);
+
+            throw new \Bitrix\Main\ObjectNotFoundException('Инфоблок с кодом '.$Code.' не существует');
+        }
+
         /**
          * возвращает id инфоблока по его коду
          * \Bxx\Helpers\IBlocks::getIdByCode('code');
