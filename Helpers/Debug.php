@@ -5,10 +5,23 @@ namespace Bxx\Helpers
 {
     class Debug
     {
+
         /**
          * Возвращает true если есть ошибки рантайма о которых знает Debug
          */
-        public static function hasError (): boolval
+        public static function isDebug (): bool
+        {
+            if (
+                    defined('DEBUG') 
+                    && DEBUG
+                ) return true;
+            return false;
+        }
+
+        /**
+         * Возвращает true если есть ошибки рантайма о которых знает Debug
+         */
+        public static function hasError (): bool
         {
             if (
                     defined('APPLICATION_ENV') 
