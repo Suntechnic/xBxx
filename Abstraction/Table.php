@@ -3,7 +3,7 @@
 см. orm в матрасах
 */
 
-namespace Bxx;
+namespace Bxx\Abstraction;
 {
     abstract class Table extends \Bitrix\Main\Entity\DataManager
     {

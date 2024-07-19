@@ -7,7 +7,7 @@ namespace Bxx\Helpers
     {
 
         /**
-         * Возвращает true если есть ошибки рантайма о которых знает Debug
+         * Возвращает true если установлена константа DEBUG
          */
         public static function isDebug (): bool
         {
