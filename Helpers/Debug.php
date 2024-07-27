@@ -5,10 +5,23 @@ namespace Bxx\Helpers
 {
     class Debug
     {
+
+        /**
+         * Возвращает true если установлена константа DEBUG
+         */
+        public static function isDebug (): bool
+        {
+            if (
+                    defined('DEBUG') 
+                    && DEBUG
+                ) return true;
+            return false;
+        }
+
         /**
          * Возвращает true если есть ошибки рантайма о которых знает Debug
          */
-        public static function hasError (): boolval
+        public static function hasError (): bool
         {
             if (
                     defined('APPLICATION_ENV') 
@@ -31,7 +44,7 @@ namespace Bxx\Helpers
                 if (!isset($_SERVER['RUNTIME_ERRORS'])) {
                     $_SERVER['RUNTIME_ERRORS'] = [$mixError];
                 } else {
-                    $_SERVER['RUNTIME_ERRORS'] = [$mixError];
+                    $_SERVER['RUNTIME_ERRORS'][] = $mixError;
                 }
             }
             return count($_SERVER['RUNTIME_ERRORS']);

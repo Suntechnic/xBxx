@@ -23,8 +23,15 @@ namespace Bxx\Helpers
                 }, ARRAY_FILTER_USE_KEY);
             return $ar;
         }
+
+
+        /**
+         * создает карту масиива массивов
+         */
+        public static function maper (array $ar, string $Key='ID'): array
+        {
+            return array_combine(array_column($ar,$Key),array_keys($ar));
+        }
         
     }
 }
-
-

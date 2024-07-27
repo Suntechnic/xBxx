@@ -36,12 +36,12 @@ namespace Bxx\Abstraction {
                 if (class_exists('\App\Settings'))
                         $this->cTime = \App\Settings::getCacheTTL() + $shiftCache;
             }
-        if (!$this->cTimes) $this->cTimes = []; // расчитанное время кэширования по методам
-        $this->cTimes['*'] = $this->cTime;
-        if (!$this->cMultiplex) $this->cMultiplex = 11;
-        if (!$this->cTimes['long']) $this->cTimes['long'] = $this->cTime*$this->cMultiplex;
-        
-        return $this;
+            if (!$this->cTimes) $this->cTimes = []; // расчитанное время кэширования по методам
+            $this->cTimes['*'] = $this->cTime;
+            if (!$this->cMultiplex) $this->cMultiplex = 11;
+            if (!$this->cTimes['long']) $this->cTimes['long'] = $this->cTime*$this->cMultiplex;
+            
+            return $this;
         }
         
         protected final function __clone() {}
