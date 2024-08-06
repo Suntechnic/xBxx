@@ -11,7 +11,7 @@ namespace Bxx
 {
     class HLBlock extends \Bxx\Abstraction\HLBModel
     {
-        public static function getInstance(string $Code='')
+        public static function getInstance (string $Code='')
         {
             if ($Code == '') throw new \Bitrix\Main\SystemException('Не указан код hlb');
             return parent::getInstance($Code);
