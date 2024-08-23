@@ -42,15 +42,22 @@ namespace Bxx\Helpers
         public static function transformator (array $ar, array $map): array
         {
             $newAr = [];
-            foreach ($ar as $I=>$arItem) {
-                $newArItem = [];
-                foreach ($map as $KeySource=>$KeyTarget) {
-                    $newArItem[$KeyTarget] = $arItem[$KeySource];
-                }
-                $newAr[$I] = $newArItem;
-            } 
-            
+            foreach ($map as $KeySource=>$KeyTarget) {
+                $newAr[$KeyTarget] = $ar[$KeySource];
+            }
+            return $newAr;
+        }
 
+        /**
+         * то же что и transformator, но для списка
+         * 
+         */
+        public static function listTransformator (array $ar, array $map): array
+        {
+            $newAr = [];
+            foreach ($ar as $I=>$arItem) {
+                $newAr[$I] = self::transformator($arItem,$map);
+            }
             return $newAr;
         }
         
