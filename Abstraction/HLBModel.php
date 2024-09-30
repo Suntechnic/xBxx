@@ -114,6 +114,11 @@ namespace Bxx\Abstraction {
             
 			return $ref;
 		}
-        
+
+        public function update (int $Id, array $arFields=[])
+        {
+			$res = $this->EntityClass::update($Id,$arFields);            
+			return $res;
+		}
     }
 }
