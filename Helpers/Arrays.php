@@ -37,6 +37,12 @@ namespace Bxx\Helpers
          * переносит значения из ключей массива $ar
          * которые есть как ключи в массиве $map
          * в ключи которые являеются значениями $map
+         * Например для создания справочника по XML_ID
+         * 
+         \Bxx\Helpers\Arrays::transformator(
+                $lst,
+                array_column($lst,'XML_ID')
+            );
          * 
          */
         public static function transformator (array $ar, array $map): array
