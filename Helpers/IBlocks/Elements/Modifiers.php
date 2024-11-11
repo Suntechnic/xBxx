@@ -9,6 +9,21 @@ namespace Bxx\Helpers\IBlocks\Elements
     {
         
         /**
+         * добавляет наследуюемые свойства
+         */
+        public static function inheriter (array &$dctElement, string $Key='SEO'): array 
+        {
+            if ($dctElement['IBLOCK_ID'] && $dctElement['ID']) {
+                $ipropSectionValues = new \Bitrix\Iblock\InheritedProperty\ElementValues(
+                        $dctElement['IBLOCK_ID'], 
+                        $dctElement['ID']
+                    );
+                $dctElement[$Key] = $ipropSectionValues->getValues();
+            }
+            return $dctElement;
+        }
+
+        /**
          * примитивно обрабатывает файлы-картинки
          */
         public static function illustrator (array &$dctElement, array $arParams=[]): array 
