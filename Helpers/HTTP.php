@@ -15,17 +15,18 @@ namespace Bxx\Helpers
          */
         public static function process404 (string $Page404='/404.php'): void
         {
-            if (!defined("ERROR_404")) define("ERROR_404", "Y");
-            \CHTTP::setStatus("404 Not Found");
+            if (!defined('ERROR_404')) define('ERROR_404', 'Y');
+            \CHTTP::setStatus('404 Not Found');
 
             global $APPLICATION;
             if ($APPLICATION->RestartWorkarea()) {
-                require(\Bitrix\Main\Application::getDocumentRoot().$Page404);
-            } else {
-                throw new \Bitrix\Main\SystemException('Failed to reset workarea');
-            }
-            
-            
+				if (!defined('BX_URLREWRITE')) {
+					define('BX_URLREWRITE', true);
+				}
+				\Main\Composite\Engine::setEnable(false);
+				require(\Bitrix\Main\Application::getDocumentRoot().$Page404);
+				die();
+			}
         }
         
     }
