@@ -8,7 +8,8 @@ namespace Bxx\Abstraction
         public const OPTIONS = [/*
                 'OptionName' => [
                         'title' => 'Название опции для отображения в админке',
-                        'default' => 'ЗначениеПоУмолчанию'
+                        'default' => 'ЗначениеПоУмолчанию',
+                        'type' => bool|integer|string - тип опции
                     ]
             */]; 
         // может содержать дополнительные ключи для массива конфиг, 
@@ -42,11 +43,38 @@ namespace Bxx\Abstraction
         public const CACHE_TTL = 86399;
         public const CACHE_TTL_LIMIT = 86399;
         
-        public function getOptionKey (string $code): string
+        public static function getOptionKey (string $code): string
         {
             return $code;
         }
 
+
+        /**
+         * возвращает массив Опция=>Параметры
+         * для опций описанных в константе OPTIONS
+         * по сути просто массив OPTIONS
+         */
+        public static function getOptionsInfo (): array
+        {
+            return static::OPTIONS;
+        }
+        /**
+         * возвращает описание опцци по коду
+         */
+        public static function getOptionInfo (string $Code): array
+        {
+            $dctOption = static::getOptionsInfo()[$Code];
+            if (is_array($dctOption)) return $dctOption;
+            return [];
+        }
+        /**
+         * возвращает дефолтное значение опции по коду
+         */
+        public static function getOptionDefault (string $Code)
+        {
+            $dctOption = static::getOptionInfo($Code);
+            return $dctOption['default'];
+        }
 
         /**
          * возвращает массив Опция=>Значение
@@ -67,16 +95,48 @@ namespace Bxx\Abstraction
          */
         public static function getOption (string $Code)
         {
-            if (static::OPTIONS[$Code]) $default = static::OPTIONS[$Code]['default'];
-            return \Bitrix\Main\Config\Option::get(
+
+            $dctOption = static::getOptionInfo($Code);
+            $Value = \Bitrix\Main\Config\Option::get(
                     static::MODULE,
                     static::getOptionKey($Code),
-                    $default
+                    $dctOption['default']
                 );
+
+            // преобразование типов
+            if ($dctOption['type'] == 'bool') {
+                if ($Value == 'Y') {
+                    $Value = true;
+                } elseif ($Value == 'N') {
+                    $Value = false;
+                } else {
+                    $Value = !!$Value;
+                }
+            } elseif ($dctOption['type'] == 'integer') {
+                $Value = intval($Value);
+            } elseif ($dctOption['type'] == 'string') {
+                $Value = (string)$Value;
+            }
+            
+            return $Value;
         }
-        
         public static function setOption (string $Code, $Value)
         {
+            $dctOption = static::getOptionInfo($Code);
+
+            // преобразование типов
+            if ($dctOption['type'] == 'bool') {
+                if (!!$Value) {
+                    $Value = 'Y';
+                } else {
+                    $Value = 'N';
+                }
+            } elseif ($dctOption['type'] == 'integer') {
+                $Value = intval($Value);
+            } elseif ($dctOption['type'] == 'string') {
+                $Value = (string)$Value;
+            }
+
             return \Bitrix\Main\Config\Option::set(
                     static::MODULE,
                     static::getOptionKey($Code),
