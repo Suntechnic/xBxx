@@ -58,6 +58,27 @@ namespace Bxx\Abstraction
         {
             return static::OPTIONS;
         }
+
+        /**
+         * возвращает hash выбранных опций
+         * для разделения компонентного хэша
+         */
+        public static function getOptionsHash (array $lstOptions=[]): string
+        {
+            if (!$lstOptions) $lstOptions = array_keys(static::OPTIONS);
+            $strValues = [];
+
+            // для единообразия массив должен быть отсортирован
+            sort($lstOptions);
+
+            $refOptions = [];
+            foreach ($lstOptions as $CodeOption) {
+                $refOptions[$CodeOption] = self::getOption($CodeOption);
+            }
+
+            return md5(serialize($refOptions));
+        }
+
         /**
          * возвращает описание опцци по коду
          */
