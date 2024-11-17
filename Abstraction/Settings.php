@@ -7,9 +7,14 @@ namespace Bxx\Abstraction
         // может содержать список опций приложения, описанные здесь опции попадут в ключ options конфигурации
         public const OPTIONS = [/*
                 'OptionName' => [
-                        'title' => 'Название опции для отображения в админке',
                         'default' => 'ЗначениеПоУмолчанию',
-                        'type' => bool|integer|string - тип опции
+                        'type' => bool|integer|string, - тип опции
+                        // следующие ключи опций поддерживаются гаджетом настройки проекта
+                        'title' => 'Название опции для отображения в админке', // в гаджете отображаются опции имеющие title и type
+                        'hint' => 'подсказка возле тайтла',
+                        'tab' => 'Название таба для вывода', // если таб не указана настройка будет выведена на табе Разное
+                        'exampleMethod' => '\App\Settings::deliveryExample' // можно указать метод, которы вернрнет строку добавляему в дополнительную строку-ячейку таблицы, 
+                                                                            // это полезно для демонстрации как именно будут интерпритироваться настройки
                     ]
             */]; 
         // может содержать дополнительные ключи для массива конфиг, 
@@ -135,7 +140,7 @@ namespace Bxx\Abstraction
                 }
             } elseif ($dctOption['type'] == 'integer') {
                 $Value = intval($Value);
-            } elseif ($dctOption['type'] == 'string') {
+            } elseif ($dctOption['type'] == 'string' || $dctOption['type'] == 'text') {
                 $Value = (string)$Value;
             }
             
@@ -154,7 +159,7 @@ namespace Bxx\Abstraction
                 }
             } elseif ($dctOption['type'] == 'integer') {
                 $Value = intval($Value);
-            } elseif ($dctOption['type'] == 'string') {
+            } elseif ($dctOption['type'] == 'string' || $dctOption['type'] == 'text') {
                 $Value = (string)$Value;
             }
 
