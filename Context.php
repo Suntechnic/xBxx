@@ -4,21 +4,48 @@ namespace Bxx
     class Context
     {
 
-        
-        private static $instance;
-        public static function getInstance(): self
+        protected $bxContext;
+        /**
+         * создает контекст
+         * на вход может принимать массив имен=>вариантовСостояний
+         */
+        public function __construct(array $ref=null) 
         {
-            if (!self::$instance) {
-                self::$instance = new self;
-            }
-            return self::$instance;
+            if ($ref) $this->import($ref);
         }
 
-        protected $bxContext;
-        protected function __construct() 
+        /**
+         * поднимае список состояний
+         */
+        public function up (array $lst): self
         {
-            $context = \Bitrix\Main\Application::getInstance()->getContext();
-            $this->bxContext = $context;
+            foreach ($lst as $Name) {
+                $this->getState($Name);
+            }
+            return $this;
+        }
+
+        /**
+         * возвращает массив ИмяСостояния=>КодВариантаСостояния
+         */
+        public function export (): array
+        {
+            $ref = [];
+            foreach ($this->refStates as $Name=>$state) {
+                $ref[$Name] = $state->get();
+            }
+            return $ref;
+        }
+
+        /**
+         * импортирует состояния из массива ИмяСостояния=>КодВариантаСостояния
+         */
+        public function import (array $ref): self
+        {
+            foreach ($ref as $Name=>$NameVariant) {
+                $state = $this->getState($Name);
+                $state->set($NameVariant);
+            }
             return $this;
         }
 
@@ -52,11 +79,9 @@ namespace Bxx
             return $Name;
         }
 
-
-
     
 
-        private $dctStates = [];
+        private $refStates = [];
         /**
          * возвращает состояние
          * имплементирующие интерфейс \Bxx\Abstraction\Context\State
@@ -65,16 +90,32 @@ namespace Bxx
         public function getState (string $Name): \Bxx\Abstraction\Context\State
         {
             $Name = $this->getRealName($Name);
-            if (!$dctStates[$Name]) {
+            if (!$this->refStates[$Name]) {
                 $state = new $Name($this);
                 if (is_subclass_of($state,'\Bxx\Abstraction\Context\State')) {
-                    $dctStates[$Name] = $state;
+                    $this->refStates[$Name] = $state;
                 } else {
                     throw new \Bitrix\Main\SystemException($Name.' не является состоянием');
                 }
             }
-            return $state;
+            return $this->refStates[$Name];
         }
+
+        /**
+         * Возвращает массив-список с описанием всех текущих загруженных состояний
+         * 
+         */
+        public function getDescription (): array
+        {
+            $lst = [];
+            foreach ($this->refStates as $state) {
+                $lst[] = $state->getDescription();
+            }
+            return $lst;
+        }
+
+
+
 
     }
 }

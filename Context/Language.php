@@ -7,7 +7,7 @@ namespace Bxx\Context {
         /**
          * название соятояния
          */
-        public function getTitle (): string
+        public function getTitleState (): string
         {
             return 'Язык';
         }
@@ -61,9 +61,10 @@ namespace Bxx\Context {
          * возвращает имя/код текущего варианта состояния
          *  
          */
-        public function get (): string
+        public function set (string $Name=''): self
         {
-            return LANGUAGE_ID;
+            if (!$Name) $Name = LANGUAGE_ID;
+            return parent::set($Name);
         }
 
         /**
