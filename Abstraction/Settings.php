@@ -9,16 +9,25 @@ namespace Bxx\Abstraction
                 'OptionName' => [
                         'default' => 'ЗначениеПоУмолчанию',
                         'type' => bool|integer|string, - тип опции
+
+                        'context' => [],    // массив имен состояний контекста в которые могут быть помещены опции
+                                            // контекст будет получен из \App\Context
+                                            // или зи \Bxx\Context если \App\Context не реализован
+
                         // следующие ключи опций поддерживаются гаджетом настройки проекта
                         'title' => 'Название опции для отображения в админке', // в гаджете отображаются опции имеющие title и type
                         'hint' => 'подсказка возле тайтла',
                         'tab' => 'Название таба для вывода', // если таб не указана настройка будет выведена на табе Разное
-                        'exampleMethod' => '\App\Settings::deliveryExample' // можно указать метод, которы вернрнет строку добавляему в дополнительную строку-ячейку таблицы, 
+                        'exampleMethod' => '\App\Settings::deliveryExample' // можно указать метод, который вернрнет строку добавляемую в дополнительную строку-ячейку таблицы,
                                                                             // это полезно для демонстрации как именно будут интерпритироваться настройки
                     ]
-            */]; 
+            */];
+        
+
+
+
         // может содержать дополнительные ключи для массива конфиг, 
-        // где значения - это имена методово реализации этого класса
+        // где значения - это имена методов реализации этого класса
         protected const KEYS = [/*
                 'Key' => 'MethodName'
             */];
@@ -70,7 +79,7 @@ namespace Bxx\Abstraction
          */
         public static function getOptionsHash (array $lstOptions=[]): string
         {
-            if (!$lstOptions) $lstOptions = array_keys(static::OPTIONS);
+            if (!$lstOptions) $lstOptions = array_keys(static::getOptionsInfo());
             $strValues = [];
 
             // для единообразия массив должен быть отсортирован
@@ -93,6 +102,7 @@ namespace Bxx\Abstraction
             if (is_array($dctOption)) return $dctOption;
             return [];
         }
+
         /**
          * возвращает дефолтное значение опции по коду
          */
@@ -109,7 +119,7 @@ namespace Bxx\Abstraction
         public static function getOptions (): array
         {
             $dctOptions = [];
-            foreach (static::OPTIONS as $Code=>$_) {
+            foreach (static::getOptionsInfo() as $Code=>$_) {
                 $dctOptions[$Code] = static::getOption($Code);
             }
             return $dctOptions;

@@ -1,5 +1,4 @@
 <?
-
 namespace Bxx\Abstraction {
     abstract class HLBModel extends Model {
         

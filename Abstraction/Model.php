@@ -20,7 +20,6 @@ namespace Bxx\Abstraction {
                 'getCnt' => 18000 // 5 часов
             ];
         */
-        
         protected function __construct (string $uid)
         {
             
