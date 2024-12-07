@@ -55,6 +55,19 @@ namespace Bxx\Helpers
         }
 
         /**
+         * создает справочник для списка по ключу $Key
+         */
+        public static function referencer (array $lst, string $Key='ID'): array
+        {
+            return \Bxx\Helpers\Arrays::transformator(
+                    $lst,
+                    array_column($lst,$Key)
+                );
+        }
+
+
+
+        /**
          * то же что и transformator, но для списка
          * 
          */
