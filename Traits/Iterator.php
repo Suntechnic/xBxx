@@ -34,3 +34,22 @@ namespace Bxx\Traits {
         }
     }
 }
+
+/**
+ * Классическое использование
+use \Bxx\Traits\Iterator;
+
+public function __construct ()
+{
+    $lst = self::getList();
+    $this->lstList = array_column($lst,'ID'); // список id
+    $this->refById = array_combine($this->lstList,$lst); // справончик по индентификаторам
+}
+
+private $refById = [];
+public function current() 
+{
+    $Id = $this->lstList[$this->IndexList];
+    return $this->refById[$Id];
+}
+*/
