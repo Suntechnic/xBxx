@@ -8,7 +8,7 @@ namespace Bxx\Abstraction
         public const OPTIONS = [/*
                 'OptionName' => [
                         'default' => 'ЗначениеПоУмолчанию',
-                        'type' => bool|integer|string, - тип опции
+                        'type' => bool|integer|float|string, - тип опции
 
                         'context' => [],    // массив имен состояний контекста в которые могут быть помещены опции
                                             // контекст будет получен из \App\Context
@@ -150,6 +150,8 @@ namespace Bxx\Abstraction
                 }
             } elseif ($dctOption['type'] == 'integer') {
                 $Value = intval($Value);
+            } elseif ($dctOption['type'] == 'float') {
+                $Value = floatval($Value);
             } elseif ($dctOption['type'] == 'string' || $dctOption['type'] == 'text') {
                 $Value = (string)$Value;
             }
@@ -169,6 +171,8 @@ namespace Bxx\Abstraction
                 }
             } elseif ($dctOption['type'] == 'integer') {
                 $Value = intval($Value);
+            } elseif ($dctOption['type'] == 'float') {
+                $Value = floatval($Value);
             } elseif ($dctOption['type'] == 'string' || $dctOption['type'] == 'text') {
                 $Value = (string)$Value;
             }
