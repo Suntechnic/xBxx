@@ -18,7 +18,7 @@ namespace Bxx\Helpers\IBlocks
 
             if (defined('APPLICATION_ENV') && APPLICATION_ENV == 'dev') {
                 $CacheTTL = 0;
-            } else $CacheTTL = \App\Settings::getCacheTTL();
+            } else $CacheTTL = \Bxx\Settings::getCacheTTL();
 
             $refProps = [];
 

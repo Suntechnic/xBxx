@@ -113,7 +113,9 @@ namespace Bxx\Helpers
             $CacheKey = 'getList';
             if (defined('APPLICATION_ENV') && APPLICATION_ENV == 'dev') {
                 $CacheTTL = 0;
-            } else $CacheTTL = \App\Settings::getCacheTTL();
+            } else {
+                $CacheTTL = \Bxx\Settings::getCacheTTL();
+            }
 
             $lst = [];
             

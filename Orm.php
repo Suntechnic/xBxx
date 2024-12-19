@@ -143,7 +143,6 @@ class Orm
         
         // если мы вышли из цикла - можно обновить хэш в БД
         Option::set('.bxx', 'orm_hash_'.$this->TDPathHash, $OrmAppHash);
-        
     }
     /*
     * 

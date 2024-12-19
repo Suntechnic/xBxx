@@ -32,6 +32,53 @@ namespace Bxx\Helpers
         {
             return array_combine(array_column($ar,$Key),array_keys($ar));
         }
+
+        /**
+         * переносит значения из ключей массива $ar
+         * которые есть как ключи в массиве $map
+         * в ключи которые являеются значениями $map
+         * Например для создания справочника по XML_ID
+         * 
+         \Bxx\Helpers\Arrays::transformator(
+                $lst,
+                array_column($lst,'XML_ID')
+            );
+         * 
+         */
+        public static function transformator (array $ar, array $map): array
+        {
+            $newAr = [];
+            foreach ($map as $KeySource=>$KeyTarget) {
+                $newAr[$KeyTarget] = $ar[$KeySource];
+            }
+            return $newAr;
+        }
+
+        /**
+         * создает справочник для списка по ключу $Key
+         */
+        public static function referencer (array $lst, string $Key='ID'): array
+        {
+            return \Bxx\Helpers\Arrays::transformator(
+                    $lst,
+                    array_column($lst,$Key)
+                );
+        }
+
+
+
+        /**
+         * то же что и transformator, но для списка
+         * 
+         */
+        public static function listTransformator (array $ar, array $map): array
+        {
+            $newAr = [];
+            foreach ($ar as $I=>$arItem) {
+                $newAr[$I] = self::transformator($arItem,$map);
+            }
+            return $newAr;
+        }
         
     }
 }

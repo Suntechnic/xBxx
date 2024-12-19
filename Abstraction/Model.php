@@ -20,7 +20,6 @@ namespace Bxx\Abstraction {
                 'getCnt' => 18000 // 5 часов
             ];
         */
-        
         protected function __construct (string $uid)
         {
             
@@ -33,8 +32,7 @@ namespace Bxx\Abstraction {
                 $shiftCache = strlen($uid)*10 + intval($uid);
                 // время кэширования по умолчанию
                 $this->cTime = 86399;
-                if (class_exists('\App\Settings'))
-                        $this->cTime = \App\Settings::getCacheTTL() + $shiftCache;
+                $this->cTime = \Bxx\Settings::getCacheTTL() + $shiftCache;
             }
             if (!$this->cTimes) $this->cTimes = []; // расчитанное время кэширования по методам
             $this->cTimes['*'] = $this->cTime;

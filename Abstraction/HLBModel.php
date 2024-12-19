@@ -1,5 +1,4 @@
 <?
-
 namespace Bxx\Abstraction {
     abstract class HLBModel extends Model {
         
@@ -114,6 +113,11 @@ namespace Bxx\Abstraction {
             
 			return $ref;
 		}
-        
+
+        public function update (int $Id, array $arFields=[])
+        {
+			$res = $this->EntityClass::update($Id,$arFields);            
+			return $res;
+		}
     }
 }

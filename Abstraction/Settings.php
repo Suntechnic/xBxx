@@ -4,31 +4,183 @@ namespace Bxx\Abstraction
     class Settings
     {
         public const MODULE = '.app';
-        public const OPTIONS = [];
+        // может содержать список опций приложения, описанные здесь опции попадут в ключ options конфигурации
+        public const OPTIONS = [/*
+                'OptionName' => [
+                        'default' => 'ЗначениеПоУмолчанию',
+                        'type' => bool|integer|float|string, - тип опции
+
+                        'context' => [],    // массив имен состояний контекста в которые могут быть помещены опции
+                                            // контекст будет получен из \App\Context
+                                            // или зи \Bxx\Context если \App\Context не реализован
+
+                        // следующие ключи опций поддерживаются гаджетом настройки проекта
+                        'title' => 'Название опции для отображения в админке', // в гаджете отображаются опции имеющие title и type
+                        'hint' => 'подсказка возле тайтла',
+                        'tab' => 'Название таба для вывода', // если таб не указана настройка будет выведена на табе Разное
+                        'exampleMethod' => '\App\Settings::deliveryExample' // можно указать метод, который вернрнет строку добавляемую в дополнительную строку-ячейку таблицы,
+                                                                            // это полезно для демонстрации как именно будут интерпритироваться настройки
+                    ]
+            */];
+        
+
+
+
+        // может содержать дополнительные ключи для массива конфиг, 
+        // где значения - это имена методов реализации этого класса
+        protected const KEYS = [/*
+                'Key' => 'MethodName'
+            */];
+        /**
+         * Пример метода загрузки путей api
+        public static function getApi (): array
+        {
+            $refApi = [];
+            $router = \Bitrix\Main\Application::getInstance()->getRouter();
+            foreach ($router->getRoutes() as $route) {
+                $options = $route->getOptions();
+                if ($options->getFullPrefix() == '/api/v1' // это api
+                        && $options->getFullName() // и он именованный (публичный)
+                    ) {
+                    $refApi[$options->getFullName()] = [
+                            'uri' => $route->getUri(),
+                            'parameters' => $route->getParameters(),
+                            'methods' => $options->getMethods()
+                        ];
+                }
+                
+            }
+            return $refApi;
+        }
+         */
+
         public const CACHE_TTL = 86399;
         public const CACHE_TTL_LIMIT = 86399;
         
-        public function getOptionKey (string $code): string
+        public static function getOptionKey (string $code): string
         {
             return $code;
         }
-        
-        public static function getOption (string $code)
+
+
+        /**
+         * возвращает массив Опция=>Параметры
+         * для опций описанных в константе OPTIONS
+         * по сути просто массив OPTIONS
+         */
+        public static function getOptionsInfo (): array
         {
-            if (static::OPTIONS[$code]) $default = static::OPTIONS[$code]['default'];
-            return \Bitrix\Main\Config\Option::get(
-                    static::MODULE,
-                    static::getOptionKey($code),
-                    $default
-                );
+            return static::OPTIONS;
+        }
+
+        /**
+         * возвращает hash выбранных опций
+         * для разделения компонентного хэша
+         */
+        public static function getOptionsHash (array $lstOptions=[]): string
+        {
+            if (!$lstOptions) $lstOptions = array_keys(static::getOptionsInfo());
+            $strValues = [];
+
+            // для единообразия массив должен быть отсортирован
+            sort($lstOptions);
+
+            $refOptions = [];
+            foreach ($lstOptions as $CodeOption) {
+                $refOptions[$CodeOption] = self::getOption($CodeOption);
+            }
+
+            return md5(serialize($refOptions));
+        }
+
+        /**
+         * возвращает описание опцци по коду
+         */
+        public static function getOptionInfo (string $Code): array
+        {
+            $dctOption = static::getOptionsInfo()[$Code];
+            if (is_array($dctOption)) return $dctOption;
+            return [];
+        }
+
+        /**
+         * возвращает дефолтное значение опции по коду
+         */
+        public static function getOptionDefault (string $Code)
+        {
+            $dctOption = static::getOptionInfo($Code);
+            return $dctOption['default'];
+        }
+
+        /**
+         * возвращает массив Опция=>Значение
+         * для опций описанных в константе OPTIONS
+         */
+        public static function getOptions (): array
+        {
+            $dctOptions = [];
+            foreach (static::getOptionsInfo() as $Code=>$_) {
+                $dctOptions[$Code] = static::getOption($Code);
+            }
+            return $dctOptions;
         }
         
-        public static function setOption (string $code, $value)
+        /**
+         * возвращает знаение опции приложения по его имени
+         * если необходимо дефолтное значение - оно должно быть описано в константе OPTIONS
+         */
+        public static function getOption (string $Code)
         {
+
+            $dctOption = static::getOptionInfo($Code);
+            $Value = \Bitrix\Main\Config\Option::get(
+                    static::MODULE,
+                    static::getOptionKey($Code),
+                    $dctOption['default']
+                );
+
+            // преобразование типов
+            if ($dctOption['type'] == 'bool') {
+                if ($Value == 'Y') {
+                    $Value = true;
+                } elseif ($Value == 'N') {
+                    $Value = false;
+                } else {
+                    $Value = !!$Value;
+                }
+            } elseif ($dctOption['type'] == 'integer') {
+                $Value = intval($Value);
+            } elseif ($dctOption['type'] == 'float') {
+                $Value = floatval($Value);
+            } elseif ($dctOption['type'] == 'string' || $dctOption['type'] == 'text') {
+                $Value = (string)$Value;
+            }
+            
+            return $Value;
+        }
+        public static function setOption (string $Code, $Value)
+        {
+            $dctOption = static::getOptionInfo($Code);
+
+            // преобразование типов
+            if ($dctOption['type'] == 'bool') {
+                if (!!$Value) {
+                    $Value = 'Y';
+                } else {
+                    $Value = 'N';
+                }
+            } elseif ($dctOption['type'] == 'integer') {
+                $Value = intval($Value);
+            } elseif ($dctOption['type'] == 'float') {
+                $Value = floatval($Value);
+            } elseif ($dctOption['type'] == 'string' || $dctOption['type'] == 'text') {
+                $Value = (string)$Value;
+            }
+
             return \Bitrix\Main\Config\Option::set(
                     static::MODULE,
-                    static::getOptionKey($code),
-                    $value
+                    static::getOptionKey($Code),
+                    $Value
                 );
         }
         
@@ -46,10 +198,9 @@ namespace Bxx\Abstraction
         {
             if (!$timestamp) $timestamp = $_SERVER['REQUEST_TIME']; // если время не передано
                                                                     // наивно предположим что оно такое же как на сервере
+
             $arConfig = [
-                    'options' => [
-                            
-                        ],
+                    'options' => static::getOptions(),
                     'env' => [
                             'stage' => defined('APPLICATION_ENV')?APPLICATION_ENV:'production',
                             'timestamp' => time(),
@@ -61,7 +212,7 @@ namespace Bxx\Abstraction
                     'bitrix' => [
                             'SITE_TEMPLATE_PATH' => SITE_TEMPLATE_PATH,
                             'START_EXEC_TIME' => START_EXEC_TIME,
-                        ]
+                        ],
                 ];
             
             global $USER;
@@ -78,6 +229,11 @@ namespace Bxx\Abstraction
                         'id' => 0,
                         'email_hash' => ''
                     ];
+            }
+
+            // дополнительные ключи
+            foreach (static::KEYS as $Key=>$Method) {
+                $arConfig[$Key] = static::$Method();
             }
             
             return $arConfig;

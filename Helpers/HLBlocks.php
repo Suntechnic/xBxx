@@ -38,15 +38,15 @@ namespace Bxx\Helpers
         /**
          * Возращает код по имени таблицы
          */
-        public static function getCodeByTable (string $Table): string
+        public static function getCodeByTable (string $TableName): string
         {
-            if (!isset(self::$_memoizing['getCodeByTable'][$Table])) {
+            if (!isset(self::$_memoizing['getCodeByTable'][$TableName])) {
                 $dctHLBlockData = self::getHLBlockData([
-                        'TABLE_NAME' => $Table
+                        'TABLE_NAME' => $TableName
                     ]);
-                self::$_memoizing['getCodeByTable'][$Table] = $dctHLBlockData['NAME'];
+                self::$_memoizing['getCodeByTable'][$TableName] = $dctHLBlockData['NAME'];
             }
-            return self::$_memoizing['getCodeByTable'][$Table];
+            return self::$_memoizing['getCodeByTable'][$TableName];
         }
 
 
