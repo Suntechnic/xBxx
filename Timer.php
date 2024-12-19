@@ -62,6 +62,8 @@ class Timer
     {
         if ($this->refBacket[$Name]) {
             return $this->refBacket[$Name];
+        } else if ($this->refTimers[$Name]) {
+            return hrtime(true) - $this->refTimers[$Name];
         } else {
             return 0;
         }
