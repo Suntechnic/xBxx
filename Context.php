@@ -5,17 +5,30 @@ namespace Bxx
     {
 
         protected $bxContext;
+        protected $Default;
+
+
         /**
          * создает контекст
-         * на вход может принимать массив имен=>вариантовСостояний
+         * на вход может принимать массив ИмяСостояния=>КодВариантаСостояния
+         * 
          */
         public function __construct(array $ref=null) 
         {
-            if ($ref) $this->import($ref);
+            if ($ref) {
+                $this->import($ref);
+                $Default = false;
+            } else {
+                // дефолтный контекст
+                $Default = true;
+            }
         }
 
         /**
-         * поднимае список состояний
+         * поднимает список состояний
+         * получает на вход сиписок имен состояния и инициализирует его - получается варианты для кадого
+         * характерные для текущего контекста
+         * 
          */
         public function up (array $lst): self
         {
@@ -39,6 +52,7 @@ namespace Bxx
 
         /**
          * импортирует состояния из массива ИмяСостояния=>КодВариантаСостояния
+         * 
          */
         public function import (array $ref): self
         {
