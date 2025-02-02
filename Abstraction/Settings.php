@@ -183,6 +183,21 @@ namespace Bxx\Abstraction
                     $Value
                 );
         }
+        public static function set (string $Code, $Value)
+        {
+            return static::setOption($Code, $Value);
+        }
+        public static function get (string $Code)
+        {
+            return static::getOption($Code);
+        }
+        public static function delete (string $Code)
+        {
+            return \Bitrix\Main\Config\Option::delete(
+                    static::MODULE,
+                    ['name' => static::getOptionKey($Code)]
+                );
+        }
         
         public static function getCacheTTL (int $TTL=0): int
         {
