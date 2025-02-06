@@ -187,9 +187,11 @@ namespace Bxx\Abstraction
         {
             return static::setOption($Code, $Value);
         }
-        public static function get (string $Code)
+        public static function get (string $Code, $Default=null)
         {
-            return static::getOption($Code);
+            $Value = static::getOption($Code);
+            if (is_null($Value)) $Value = $Default;
+            return $Value;
         }
         public static function delete (string $Code)
         {
