@@ -229,7 +229,11 @@ namespace Bxx\Abstraction
                     'bitrix' => [
                             'SITE_TEMPLATE_PATH' => SITE_TEMPLATE_PATH,
                             'START_EXEC_TIME' => START_EXEC_TIME,
+                            'SITE_ID' => defined('SITE_ID')?SITE_ID:'',
                         ],
+                    'context' => [
+                        'siteid' => \Bitrix\Main\Context::getCurrent()->getSite()
+                    ]
                 ];
             
             global $USER;
