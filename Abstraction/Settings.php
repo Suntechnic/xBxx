@@ -150,6 +150,8 @@ namespace Bxx\Abstraction
                 }
             } elseif ($dctOption['type'] == 'integer') {
                 $Value = intval($Value);
+                if (isset($dctOption['max']) && $Value > $dctOption['max']) $Value = $dctOption['max'];
+                if (isset($dctOption['min']) && $Value < $dctOption['min']) $Value = $dctOption['min'];
             } elseif ($dctOption['type'] == 'float') {
                 $Value = floatval($Value);
             } elseif ($dctOption['type'] == 'string' || $dctOption['type'] == 'text') {
