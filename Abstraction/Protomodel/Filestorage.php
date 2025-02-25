@@ -2,6 +2,8 @@
 // Filestorage::getInstance()->getFileSrc();
 
 /*
+Filestorage
+b_hlbd_filestorage
 Список полей:
 UF_NAME	Строка
 UF_FILE	Файл

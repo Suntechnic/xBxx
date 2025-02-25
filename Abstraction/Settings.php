@@ -183,6 +183,23 @@ namespace Bxx\Abstraction
                     $Value
                 );
         }
+        public static function set (string $Code, $Value)
+        {
+            return static::setOption($Code, $Value);
+        }
+        public static function get (string $Code, $Default=null)
+        {
+            $Value = static::getOption($Code);
+            if (is_null($Value)) $Value = $Default;
+            return $Value;
+        }
+        public static function delete (string $Code)
+        {
+            return \Bitrix\Main\Config\Option::delete(
+                    static::MODULE,
+                    ['name' => static::getOptionKey($Code)]
+                );
+        }
         
         public static function getCacheTTL (int $TTL=0): int
         {
@@ -212,7 +229,11 @@ namespace Bxx\Abstraction
                     'bitrix' => [
                             'SITE_TEMPLATE_PATH' => SITE_TEMPLATE_PATH,
                             'START_EXEC_TIME' => START_EXEC_TIME,
+                            'SITE_ID' => defined('SITE_ID')?SITE_ID:'',
                         ],
+                    'context' => [
+                        'siteid' => \Bitrix\Main\Context::getCurrent()->getSite()
+                    ]
                 ];
             
             global $USER;
