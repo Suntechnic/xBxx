@@ -3,11 +3,29 @@ namespace Bxx
 {
     class Context
     {
+        /**
+         * Контекст, это набор имен состоиний, являющихся идентификаторами состояния
+         * и их значений (кодов вариантов состояния)
+         * При этом имя, является именем класса представляющего состояния
+         * Для классов можно установить алиасы
+         * 
+         * Примером имени состояния может являться \Bxx\Context\Language - встроенное состояние
+         * В качестве алиаса для него может быть уставнолен алиас lang
+         * 
+         * Таким образом контекст может выглядеть как:
+         * 'lang' => 'ru'
+         * 
+         * Контекст должен быть наследником \Bxx\Abstraction\Context\State
+         * 
+         * 
+         */
 
         protected $bxContext;
         /**
          * создает контекст
          * на вход может принимать массив имен=>вариантовСостояний
+         * 
+         * 
          */
         public function __construct(array $ref=null) 
         {
@@ -15,7 +33,7 @@ namespace Bxx
         }
 
         /**
-         * поднимае список состояний
+         * поднимает список состояний
          */
         public function up (array $lst): self
         {
@@ -26,7 +44,9 @@ namespace Bxx
         }
 
         /**
+         * Экспортирует текущий контекст
          * возвращает массив ИмяСостояния=>КодВариантаСостояния
+         * 
          */
         public function export (): array
         {
@@ -54,22 +74,27 @@ namespace Bxx
         private $refAliases = [];
         /**
          * устанавливает название алиас для состояния
-         * например setAlias('lang','\App\Context\Language')
+         * например setAlias('lang','\Bxx\Context\Language')
+         * 
+         * 
          */
         public function setAlias (string $Alias, string $Name): void
         {
             $this->refAliases[$Alias] = $Name;
         }
+
         /**
          * устанавливает сразу много алиасов
-         * например setAliases (['lang'=>'\App\Context\Language', 'language'=>'lang'])
+         * например setAliases (['lang'=>'\Bxx\Context\Language', 'language'=>'lang'])
          */
         public function setAliases (array $map): void
         {
             foreach ($map as $Alias=>$Name) $this->setAlias($Alias, $Name);
         }
+
         /**
-         * возвращает конечное имя
+         * возвращает конечное имя (class состояния по алиасу)
+         * 
          */
         public function getRealName (string $Name): string
         {
@@ -84,7 +109,7 @@ namespace Bxx
         private $refStates = [];
         /**
          * возвращает состояние
-         * имплементирующие интерфейс \Bxx\Abstraction\Context\State
+         * наследник \Bxx\Abstraction\Context\State
          * 
          */
         public function getState (string $Name): \Bxx\Abstraction\Context\State

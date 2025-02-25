@@ -64,7 +64,16 @@ namespace Bxx\Context {
         public function set (string $Name=''): self
         {
             if (!$Name) $Name = LANGUAGE_ID;
-            return parent::set($Name);
+            if ($Name != LANGUAGE_ID) { // изменение языка
+
+                $context = \Bitrix\Main\Application::getInstance()->getContext();
+                $request = $context->getRequest();
+                $uri = new \Bitrix\Main\Web\Uri($request->getRequestUri());
+                $uri->addParams(['lang'=>$Name]);
+
+                LocalRedirect($uri->getUri()); 
+            }
+            return $this;
         }
 
         /**
