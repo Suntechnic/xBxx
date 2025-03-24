@@ -33,6 +33,8 @@ namespace Bxx\Abstraction\Context {
             foreach ($lst as $dct) {
                 if ($dct['name'] == $Name) return $dct['title'];
             }
+
+            return $Name.' (unnamed)';
         }
         
         /**
@@ -72,13 +74,13 @@ namespace Bxx\Abstraction\Context {
         }
 
         /**
-         * меняет текущее вариант состояниe
-         * вызванный без параметров должна автоматически устанавливать текущее
+         * меняет текущее вариант состояния
+         * вызванный без параметров должен автоматически устанавливать текущее
          * состояние сохраняя его в $this->CurrentName
          * метод должен проверять является ли устанавливаемый вариант состояния допустимым
          * 
          */
-        public function set (string $Name): self
+        public function set (string $Name=''): self
         {
             $lst = $this->getList();
             foreach ($lst as $dctStateVariant) {
