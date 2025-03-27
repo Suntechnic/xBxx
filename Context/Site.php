@@ -1,7 +1,7 @@
 <?
 namespace Bxx\Context {
 
-    class Language extends \Bxx\Abstraction\Context\State
+    class Site extends \Bxx\Abstraction\Context\State
     {
 
         /**
@@ -9,7 +9,7 @@ namespace Bxx\Context {
          */
         public function getTitleState (): string
         {
-            return 'Язык';
+            return 'Сайт';
         }
 
         /**
@@ -42,14 +42,9 @@ namespace Bxx\Context {
         public function getReferences (): array
         {
             if (!$this->ref) {
-                $this->ref = [];
-                $langs = \Bitrix\Main\Localization\LanguageTable::getList([
-                        'filter' => [
-                            '=ACTIVE' => 'Y'
-                        ]
-                    ]);
-                while ($dctLang = $langs->fetch()) {
-                    $this->ref[$dctLang['LID']] = $dctLang;
+                $rdbSites = \CSite::GetList($By='sort', $Order='desc', ['ACTIVE'=>'Y']);
+                while ($dctSite = $rdbSites->Fetch()) {
+                    $this->ref[$dctSite['LID']] = $dctSite;
                 }
             }
             
@@ -58,25 +53,17 @@ namespace Bxx\Context {
 
 
         /**
-         * изменяет состояние на указанное
+         * возвращает имя/код текущего варианта состояния
          *  
          */
         public function set (string $Name=''): self
         {
             if (!$Name) {
-                $Name = LANGUAGE_ID;
+                $Name = SITE_ID;
                 parent::set($Name);
             }
-            if ($Name != LANGUAGE_ID) { // изменение языка
-                throw new \Bitrix\Main\SystemException('Изменение языка не реализовано');
-
-                
-                // $context = \Bitrix\Main\Application::getInstance()->getContext();
-                // $request = $context->getRequest();
-                // $uri = new \Bitrix\Main\Web\Uri($request->getRequestUri());
-                // $uri->addParams(['lang'=>$Name]);
-
-                // LocalRedirect($uri->getUri()); 
+            if ($Name != SITE_ID) { // изменение сайта
+                throw new \Bitrix\Main\SystemException('Изменение сайта не реализовано');
             }
             return $this;
         }
