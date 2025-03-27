@@ -7,13 +7,12 @@ class Sections
     private static $_memoizing = [];
 
     /**
-     * возвращает id инфоблока по его коду
-     * \Bxx\Helpers\IBlocks\Sections::getIdByCode('code');
+     * возвращает id раздела по его коду
      * @param string $Code - код инфоблока
      * @return int
      * @throws \Bitrix\Main\ObjectNotFoundException
      */
-    public static function getIdByCode(string $Code, int $IBlockId=0): int
+    public static function getIdByCode (string $Code, int $IBlockId=0): int
     {
 
         if (!self::$_memoizing[$IBlockId][$Code]) {
@@ -35,4 +34,31 @@ class Sections
 
         return intval(self::$_memoizing[$IBlockId][$Code]);
     }
+
+    /**
+     * Возвращает путь из разеделов до текущего
+     * @param string $Id - код инфоблока
+     * @return array
+     * @throws \Bitrix\Main\ObjectNotFoundException
+     */
+    public static function getPath (int $Id): array
+    {
+        $ulPath = [];
+        $SectionId = $Id;
+        while ($dctSection = \Bitrix\Iblock\SectionTable::getList([
+                'select' => ['ID', 'NAME', 'IBLOCK_SECTION_ID'],
+                'filter' => ['ID' => $SectionId],
+                'cache' => 3599
+            ])->fetch()) {
+            $ulPath[] = $dctSection;
+
+            if ($dctSection['IBLOCK_SECTION_ID']) {
+                $SectionId = $dctSection['IBLOCK_SECTION_ID'];
+            } else {
+                break;
+            }
+        }
+        return array_reverse($ulPath);
+    }
+
 }
