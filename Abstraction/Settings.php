@@ -4,7 +4,12 @@ namespace Bxx\Abstraction
     class Settings
     {
         public const MODULE = '.app';
+
+
+
+
         // может содержать список опций приложения, описанные здесь опции попадут в ключ options конфигурации
+        #[\Deprecated(message: 'используйте файлы в папке /local/options')]
         public const OPTIONS = [/*
                 'OptionName' => [
                         'default' => 'ЗначениеПоУмолчанию',
@@ -68,9 +73,27 @@ namespace Bxx\Abstraction
          * для опций описанных в константе OPTIONS
          * по сути просто массив OPTIONS
          */
+        private static $_optionsinfo = false;
         public static function getOptionsInfo (): array
         {
-            return static::OPTIONS;
+            if (static::$_optionsinfo === false) {
+                static::$_optionsinfo = static::OPTIONS;
+
+                // подключаем файлы опций
+                $Path = \Bitrix\Main\Application::getDocumentRoot().'/local/options';
+                $dir = new \DirectoryIterator($Path);
+                foreach ($dir as $fileinfo) {
+                    if ($fileinfo->isDot()) continue;
+                    if ($fileinfo->getExtension() != 'php') continue;
+                    $refNextOptions = include($fileinfo->getPathname());
+                    if (is_array($refNextOptions)) {
+                        static::$_optionsinfo = array_merge(static::$_optionsinfo, $refNextOptions);
+                    }
+                }
+            }
+            
+
+            return static::$_optionsinfo;
         }
 
         /**
