@@ -62,13 +62,15 @@ namespace Bxx\Abstraction
 
                 // подключаем файлы опций
                 $Path = \Bitrix\Main\Application::getDocumentRoot().'/local/options';
-                $dir = new \DirectoryIterator($Path);
-                foreach ($dir as $fileinfo) {
-                    if ($fileinfo->isDot()) continue;
-                    if ($fileinfo->getExtension() != 'php') continue;
-                    $refNextOptions = include($fileinfo->getPathname());
-                    if (is_array($refNextOptions)) {
-                        static::$_optionsinfo = array_merge(static::$_optionsinfo, $refNextOptions);
+                if (is_dir($Path)) {
+                    $dir = new \DirectoryIterator($Path);
+                    foreach ($dir as $fileinfo) {
+                        if ($fileinfo->isDot()) continue;
+                        if ($fileinfo->getExtension() != 'php') continue;
+                        $refNextOptions = include($fileinfo->getPathname());
+                        if (is_array($refNextOptions)) {
+                            static::$_optionsinfo = array_merge(static::$_optionsinfo, $refNextOptions);
+                        }
                     }
                 }
             }
