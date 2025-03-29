@@ -51,8 +51,9 @@ namespace Bxx\Abstraction
 
         /**
          * возвращает массив Опция=>Параметры
-         * для опций описанных в константе OPTIONS
+         * для опций описанных в константе options
          * по сути просто массив OPTIONS
+         * 
          */
         private static $_optionsinfo = false;
         public static function getOptionsInfo (): array
@@ -119,14 +120,35 @@ namespace Bxx\Abstraction
         /**
          * возвращает массив Опция=>Значение
          * для опций описанных в константе OPTIONS
+         * @param array $lstCode - массив кодов опций
+         * @return array - массив Опция=>Значение
+         * @example
+         * $refOptions = Settings::getOptions(['option1','option2']);
+         * $refOptions = Settings::getOptions(); // все опции определенные в конфиге
          */
-        public static function getOptions (): array
+        public static function getOptions (array $lstCode=[]): array
         {
+            if (!$lstCode) $lstCode = array_keys(static::getOptionsInfo());
+
             $dctOptions = [];
-            foreach (static::getOptionsInfo() as $Code=>$_) {
+            foreach ($lstCode as $Code) {
                 $dctOptions[$Code] = static::getOption($Code);
             }
             return $dctOptions;
+        }
+
+        /**
+         * устанавливает массив Опция=>Значение
+         * @param array $refOptions - массив Опция=>Значение
+         * @return array - массив Опция=>Значение
+         */
+        public static function setOptions (array $refOptions): array
+        {
+            $lstCode = array_keys($refOptions);
+            foreach ($lstCode as $Code) {
+                static::setOption($Code,$refOptions[$Code]);
+            }
+            return static::getOptions($lstCode);
         }
         
         /**
@@ -199,6 +221,11 @@ namespace Bxx\Abstraction
             if (is_null($Value)) $Value = $Default;
             return $Value;
         }
+
+        /**
+         * удаляет опцию приложения по коду
+         * @param string $Code - код опции
+         */
         public static function delete (string $Code)
         {
             return \Bitrix\Main\Config\Option::delete(
