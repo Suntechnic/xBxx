@@ -56,7 +56,7 @@ class E_WithDescription
                 'filter' => $dctFilter
             ])->fetchAll();
         $refSectionPath = [];
-        foreach ($lstElement as &$dctElement) {
+        foreach ($lstElement as $I=>$dctElement) {
             if ($dctElement['IBLOCK_SECTION_ID']) {
                 if (!isset($refSectionPath[$dctElement['IBLOCK_SECTION_ID']])) {
                     $refSectionPath[$dctElement['IBLOCK_SECTION_ID']] = \Bxx\Helpers\IBlocks\Sections::getPath($dctElement['IBLOCK_SECTION_ID']);
@@ -65,6 +65,8 @@ class E_WithDescription
                 $dctElement['IBLOCK_SECTION_PATH'] = $refSectionPath[$dctElement['IBLOCK_SECTION_ID']];
                 $dctElement['IBLOCK_SECTION_PATH_VALUE'] = implode('/',array_column($dctElement['IBLOCK_SECTION_PATH'], 'NAME'));
                 //$dctElement['IBLOCK_SECTION_NAME'] = end($dctElement['IBLOCK_SECTION_PATH'])['NAME'];
+
+                $lstElement[$I] = $dctElement;
             }
         }
 
@@ -118,10 +120,12 @@ class E_WithDescription
                             $dctSection = $dctSection['SORT'].':'.$dctSection['ID'];
                         });
 
-                    foreach ($refElement as &$dctElement) {
+                    foreach ($refElement as $ElementId=>$dctElement) {
                         $SORT = $refSection[$dctElement['IBLOCK_SECTION_ID']] ?? 0;
                         if ($Sorting) $SORT.= ':'.$dctElement['SORT']; // сохраним исходный индекс сортировки, если необходимо сортировать элементы
                         $dctElement['SORT'] = $SORT;
+
+                        $refElement[$ElementId] = $dctElement;
                     }
                 }
                 // в случае если группировка не нужна, то индекс сортироки точно нужен, а он уже такой как нам надо
@@ -134,6 +138,7 @@ class E_WithDescription
 
 
                 $refValue = array_combine($lstKeys, $refValue);
+
                 //$Result.= '<pre>'.print_r($refValue, true).'</pre>';
             }
             // сортировка и группировка элементов
@@ -142,14 +147,14 @@ class E_WithDescription
         }
 
 
-
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // вызов метода для единичного поля
         $dctHTMLControlName = $dctHTMLControlNamePrefix;
         // существующие значения
         $PreviuosSection = '';
         foreach ($refValue as $K=>$dctValue) {
-            
+
+        
             $dctHTMLControlName['VALUE'] = $dctHTMLControlNamePrefix['VALUE'].'['.$K.'][VALUE]';
             $dctHTMLControlName['DESCRIPTION'] = $dctHTMLControlNamePrefix['VALUE'].'['.$K.'][DESCRIPTION]';
 
@@ -163,6 +168,8 @@ class E_WithDescription
                 }
             }
 
+
+
             $Result.= static::GetPropertyFieldHtml(
                     $dctProperty, 
                     $dctValue, 
@@ -171,6 +178,7 @@ class E_WithDescription
                 );
             $Result.= '<br>';
         }
+
         // поля под новые значения
         for ($K=1; $K<=$dctProperty['MULTIPLE_CNT']; $K++) {
             $dctHTMLControlName['VALUE'] = $dctHTMLControlNamePrefix['VALUE'].'[n'.$K.'][VALUE]';
@@ -226,9 +234,10 @@ class E_WithDescription
             $Value = '';
             $DescriptionTitle = '';
         }
+
         
 		$WindowTableId = 'iblockprop-'.\Bitrix\Iblock\PropertyTable::TYPE_ELEMENT.'-'.$dctProperty['ID'].'-'.$dctProperty['LINK_IBLOCK_ID'];
-        
+            
         $SearchUrl = (defined('SELF_FOLDER_URL') ? SELF_FOLDER_URL : '/bitrix/admin/').'iblock_element_search.php';
         $SearchUrl.= '?lang='.LANGUAGE_ID.
 				'&amp;IBLOCK_ID='.$dctProperty['LINK_IBLOCK_ID'].
@@ -302,11 +311,10 @@ class E_WithDescription
         } else {
             $dctValue['DESCRIPTION'] = '';
         }
-        //\Kint\Kint::dump('SAVE',$dctValue); die();
         return $dctValue; 
     }
     
-    public static function ConvertFromDB(
+    public static function ConvertFromDB (
             array $dctProperty, 
             array $dctValue
         ): array
@@ -318,6 +326,7 @@ class E_WithDescription
         } else {
             $dctValue['DESCRIPTION'] = '';
         }
+        $dctValue['VALUE'] = (int)$dctValue['VALUE'];
         return $dctValue;
     }
 
