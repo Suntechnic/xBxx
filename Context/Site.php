@@ -51,7 +51,6 @@ namespace Bxx\Context {
             return $this->ref;
         }
 
-
         /**
          * возвращает имя/код текущего варианта состояния
          *  
@@ -78,7 +77,5 @@ namespace Bxx\Context {
             if (!$Name) $Name = $this->get();
             return $this->getReferences()[$Name];
         }
-
-
     }
 }
