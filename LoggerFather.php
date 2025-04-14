@@ -55,17 +55,16 @@ class LoggerFather {
 
     public static function getInstance ()
     {
-        $uid = $Name;
-        if (!isset(static::$instance)) {
+        if (!isset(self::$instance)) {
             try {
-                static::$instance = new static;
+                self::$instance = new self;
             } catch (\Exception $e) {
                 if (APPLICATION_ENV == 'dev') {
                     \Kint\Kint::dump($e->getMessage());
                 }
             }
         }
-        return static::$instance;
+        return self::$instance;
     }
 
     // устанавливает настройки

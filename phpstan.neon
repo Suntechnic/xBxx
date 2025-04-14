@@ -1,9 +1,11 @@
 parameters:
     level: 5
     scanFiles:
-        # Подключаемые файлы заданы для расположение библиотеке на глубине аналогичной нахождению в local/php_interface/lib
+        # Ядро Bitrix
         - ../../../../bitrix/modules/main/lib/db/connection.php
         - ../../../../bitrix/modules/main/lib/data/connection.php
+
+        - ../../../../bitrix/modules/main/lib/diag/filelogger.php
 
         - ../../../../bitrix/modules/main/lib/application.php
         - ../../../../bitrix/modules/main/lib/httpapplication.php
@@ -12,7 +14,13 @@ parameters:
         - ../../../../bitrix/modules/main/lib/db/exception.php
         - ../../../../bitrix/modules/main/lib/io/file.php
         - ../../../../bitrix/modules/main/lib/io/directory.php
+
+        # Инит
+        - ../../init.php
+        - ../../init/.bootstrap.php
     ignoreErrors:
         - '#Trait Bxx\\Traits\\#'
+        - '#Access to constant [A-Z]+ on an unknown class Psr\\Log\\LogLevel#'
+        - '#Call to an undefined method Bitrix\\Main\\Diag\\FileLogger::#'
         #TODO: разобраться почему phpstan не видит методов в классе Bitrix\Main\Data\Connection
         - '#Call to an undefined method Bitrix\\Main\\Data\\Connection::#'
