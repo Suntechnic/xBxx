@@ -9,10 +9,10 @@ class Timer
     private static $instance;
     public static function getInstance ()
     {
-        if (!isset(static::$instance)) {
-            static::$instance = new static();
+        if (!isset(self::$instance)) {
+            self::$instance = new self();
         }
-        return static::$instance;
+        return self::$instance;
     }
 
     private $refBacket = [];
