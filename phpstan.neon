@@ -25,6 +25,8 @@ parameters:
         # Инит
         - ../../init.php
         - ../../init/.bootstrap.php
+    bootstrapFiles:
+        - ../../vendor/autoload.php
     ignoreErrors:
         - '#Trait Bxx\\Traits\\#'
         - '#Access to constant [A-Z]+ on an unknown class Psr\\Log\\LogLevel#'

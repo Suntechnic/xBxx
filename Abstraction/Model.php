@@ -3,6 +3,11 @@ namespace Bxx\Abstraction {
     abstract class Model {
     
         static $instances = [];
+
+        protected $cDir = '';
+        protected $cTime = 0; // время кэширования по умолчанию
+        protected $cTimes = []; // время кэширования по методам
+        protected $cMultiplex = 0; // множитель кэширования
         
         public static function getInstance (string $uid)
         {
