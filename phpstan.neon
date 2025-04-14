@@ -1,0 +1,5 @@
+parameters:
+    ignoreErrors:
+        - '#Instantiated class Bitrix\\Main\\SystemException not found#'
+        - '#Throwing object of an unknown class Bitrix\\Main\\SystemException#'
+        - '#Trait Bxx\\Traits\\#'
