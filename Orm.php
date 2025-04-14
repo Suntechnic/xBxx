@@ -18,10 +18,10 @@ class Orm
     private static $instances;
         
     public static function getInstance(string $TablesDir='/local/php_interface/lib/App/Tables') {
-        if (!isset(static::$instances[$TablesDir])) {
-            static::$instances[$TablesDir]= new static($TablesDir);
+        if (!isset(self::$instances[$TablesDir])) {
+            self::$instances[$TablesDir]= new self($TablesDir);
         }
-        return static::$instances[$TablesDir];
+        return self::$instances[$TablesDir];
     }
     
     
@@ -48,7 +48,7 @@ class Orm
     
     public function checkVersion () {
         //Option::set('.bxx', 'orm_version', 0);
-        $OrmDbHash = Option::get('.bxx', 'orm_hash_'.$this->TDPathHash, false);
+        $OrmDbHash = Option::get('.bxx', 'orm_hash_'.$this->TDPathHash, '');
         $OrmAppHash = $this->getHash();
         if ($OrmDbHash && $OrmAppHash && $OrmDbHash == $OrmAppHash) return true;
         
@@ -62,7 +62,7 @@ class Orm
             $tableName = $entity->getDBTableName();
             
             // получаем текущую версию таблиц
-            $orm_db_tv = Option::get('.bxx', 'orm_tv_'.$this->TDPathHash.'_'.$tableName, 0);
+            $orm_db_tv = Option::get('.bxx', 'orm_tv_'.$this->TDPathHash.'_'.$tableName, '0');
             $orm_app_tv = $refTablesVersions[$tableName];
 
             if ($orm_db_tv != $orm_app_tv) {
@@ -122,7 +122,7 @@ class Orm
                             //\Kint::dump('Таблица пересоздана, так как это разрешено', ['table' => $tableName]);
                         } else {
                             throw new \Bitrix\Main\DB\Exception('Unable to update table version for '.$tableName);
-                            return false;
+                            // return false;
                         }
                     }
                     
