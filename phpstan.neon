@@ -7,6 +7,10 @@ parameters:
 
         - ../../../../bitrix/modules/main/lib/diag/filelogger.php
 
+        - ../../../../bitrix/modules/main/lib/routing/router.php
+        - ../../../../bitrix/modules/main/lib/routing/route.php
+        - ../../../../bitrix/modules/main/lib/routing/options.php
+
         - ../../../../bitrix/modules/main/lib/application.php
         - ../../../../bitrix/modules/main/lib/httpapplication.php
         - ../../../../bitrix/modules/main/lib/config/option.php
