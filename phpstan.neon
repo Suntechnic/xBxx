@@ -2,15 +2,13 @@ parameters:
     level: 5
     scanFiles:
         # Ядро Bitrix
+        ## главный модуль
         - ../../../../bitrix/modules/main/lib/db/connection.php
         - ../../../../bitrix/modules/main/lib/data/connection.php
-
         - ../../../../bitrix/modules/main/lib/diag/filelogger.php
-
         - ../../../../bitrix/modules/main/lib/routing/router.php
         - ../../../../bitrix/modules/main/lib/routing/route.php
         - ../../../../bitrix/modules/main/lib/routing/options.php
-
         - ../../../../bitrix/modules/main/lib/application.php
         - ../../../../bitrix/modules/main/lib/httpapplication.php
         - ../../../../bitrix/modules/main/lib/config/option.php
@@ -18,7 +16,12 @@ parameters:
         - ../../../../bitrix/modules/main/lib/db/exception.php
         - ../../../../bitrix/modules/main/lib/io/file.php
         - ../../../../bitrix/modules/main/lib/io/directory.php
-
+        - ../../../../bitrix/modules/main/lib/result.php
+        - ../../../../bitrix/modules/main/lib/orm/data/result.php
+        ## Модуль инфоблоков
+        - ../../../../bitrix/modules/iblock/lib/sectiontable.php
+        - ../../../../bitrix/modules/iblock/meta/orm.php
+        
         # Инит
         - ../../init.php
         - ../../init/.bootstrap.php
@@ -26,5 +29,6 @@ parameters:
         - '#Trait Bxx\\Traits\\#'
         - '#Access to constant [A-Z]+ on an unknown class Psr\\Log\\LogLevel#'
         - '#Call to an undefined method Bitrix\\Main\\Diag\\FileLogger::#'
-        #TODO: разобраться почему phpstan не видит методов в классе Bitrix\Main\Data\Connection
+        #TODO: разобраться с этими исключениями:
         - '#Call to an undefined method Bitrix\\Main\\Data\\Connection::#'
+        - '#Call to an undefined method Bitrix\\Iblock\\EO_Section_Result::#'

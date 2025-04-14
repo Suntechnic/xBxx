@@ -37,7 +37,7 @@ class Sections
 
     /**
      * Возвращает путь из разеделов до текущего
-     * @param string $Id - код инфоблока
+     * @param int $Id - код инфоблока
      * @return array
      * @throws \Bitrix\Main\ObjectNotFoundException
      */
