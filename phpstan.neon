@@ -1,5 +1,11 @@
 parameters:
+    level: 5
+    scanFiles:
+        # Подключаемые файлы заданы для расположение библиотеке на глубине аналогичной нахождению в local/php_interface/lib
+        - ../../../../bitrix/modules/main/lib/config/option.php
+        - ../../../../bitrix/modules/main/lib/exception.php
+        - ../../../../bitrix/modules/main/lib/db/exception.php
+        - ../../../../bitrix/modules/main/lib/io/file.php
+        - ../../../../bitrix/modules/main/lib/io/directory.php
     ignoreErrors:
-        - '#Instantiated class Bitrix\\Main\\SystemException not found#'
-        - '#Throwing object of an unknown class Bitrix\\Main\\SystemException#'
         - '#Trait Bxx\\Traits\\#'
