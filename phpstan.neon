@@ -1,14 +1,20 @@
 parameters:
     level: 5
+    # Все пути далее из расчета уставновки в local/php_interface/lib и запуска анализатора в этой же папке
+    # например из текущей pwd==local/php_interface: vendor/bin/phpstan analyse lib --configuration=lib/Bxx/phpstan.neon --memory-limit 1G
     scanDirectories:
         - ../../../../bitrix/modules
-        - ../../../../local/php_interface
+        - ../..
     scanFiles:
         # Инит
         - ../../init.php
         - ../../init/.bootstrap.php
-    excludePaths: #TODO: разобраться этими исключенияеми
-        - ../../../../local/php_interface/lib/Bxx/Abstraction/Table.php
+    excludePaths: 
+        #TODO: разобраться этими исключенияеми
+        - ../Bxx/Abstraction/Table.php
+        # Классы к удалению или переработке
+        - ../Bxx/Abstraction/Model.php
+        - ../Bxx/Abstraction/HLBModel.php
     ignoreErrors:
         - '#Trait Bxx\\Traits\\#'
         #TODO: разобраться с этими исключениями:

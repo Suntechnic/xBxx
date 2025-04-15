@@ -16,7 +16,7 @@ namespace Bxx\Abstraction {
         public static function getInstance (string $uid)
         {
             if (!isset(static::$instances[$uid])) {
-                static::$instances[$uid] = new static($uid);
+                static::$instances[$uid] = new static($uid); // @phpstan-ignore-line
             }
             return static::$instances[$uid];
         }

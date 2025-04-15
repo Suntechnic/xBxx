@@ -15,9 +15,10 @@ namespace Bxx\Abstraction\Protomodel {
         }
         
         protected $LANGUAGE_UID;
-        protected function __construct(string $Code) {
+        protected function __construct(string $Code)
+        {
             $this->LANGUAGE_UID = strtoupper(LANGUAGE_ID);
-            return parent::__construct($Code);
+            parent::__construct($Code);
         }
         
         // возвращает Значение строки по коду
