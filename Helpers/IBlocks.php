@@ -25,7 +25,7 @@ namespace Bxx\Helpers
             
             if ($dctElement && $dctElement['ID'] == $ElementId) return intval($dctElement['IBLOCK_ID']);
 
-            throw new \Bitrix\Main\ObjectNotFoundException('Инфоблок с кодом '.$Code.' не существует');
+            throw new \Bitrix\Main\ObjectNotFoundException($ElementId.' не существует');
         }
 
         /**

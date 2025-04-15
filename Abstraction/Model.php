@@ -9,6 +9,10 @@ namespace Bxx\Abstraction {
         protected $cTimes = []; // время кэширования по методам
         protected $cMultiplex = 0; // множитель кэширования
         
+        /**
+         * @param string $uid
+         * @return static
+         */
         public static function getInstance (string $uid)
         {
             if (!isset(static::$instances[$uid])) {

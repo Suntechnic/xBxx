@@ -58,8 +58,8 @@ namespace Bxx\Abstraction
         private static $_optionsinfo = false;
         public static function getOptionsInfo (): array
         {
-            if (static::$_optionsinfo === false) {
-                static::$_optionsinfo = static::OPTIONS;
+            if (static::$_optionsinfo === false) { // @phpstan-ignore-line
+                static::$_optionsinfo = static::OPTIONS; // @phpstan-ignore-line
 
                 // подключаем файлы опций
                 $Path = \Bitrix\Main\Application::getDocumentRoot().'/local/options';
@@ -70,14 +70,14 @@ namespace Bxx\Abstraction
                         if ($fileinfo->getExtension() != 'php') continue;
                         $refNextOptions = include($fileinfo->getPathname());
                         if (is_array($refNextOptions)) {
-                            static::$_optionsinfo = array_merge(static::$_optionsinfo, $refNextOptions);
+                            static::$_optionsinfo = array_merge(static::$_optionsinfo, $refNextOptions); // @phpstan-ignore-line
                         }
                     }
                 }
             }
             
 
-            return static::$_optionsinfo;
+            return static::$_optionsinfo; // @phpstan-ignore-line
         }
 
         /**
@@ -262,8 +262,8 @@ namespace Bxx\Abstraction
                             //                                                                              // в секундах
                         ],
                     'bitrix' => [
-                            'SITE_TEMPLATE_PATH' => SITE_TEMPLATE_PATH,
-                            'START_EXEC_TIME' => START_EXEC_TIME,
+                            'SITE_TEMPLATE_PATH' => defined('SITE_TEMPLATE_PATH')?SITE_TEMPLATE_PATH:'',
+                            'START_EXEC_TIME' => defined('START_EXEC_TIME')?START_EXEC_TIME:'',
                             'SITE_ID' => defined('SITE_ID')?SITE_ID:'',
                         ],
                     'context' => [

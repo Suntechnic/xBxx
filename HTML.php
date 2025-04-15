@@ -7,10 +7,10 @@ class HTML
     private static $instance;
     public static function getInstance ()
     {
-        if (!isset(static::$instance)) {
-            static::$instance = new static();
+        if (!isset(self::$instance)) {
+            self::$instance = new self();
         }
-        return static::$instance;
+        return self::$instance;
     }
 
     
@@ -40,10 +40,10 @@ class HTML
         foreach ($refAttrs as $Name=>$Value) {
             // id
             if ($Name == 'id') {
-                if ($this->$refId[$Value]) {
+                if ($this->refId[$Value]) {
                     throw new \Bitrix\Main\SystemException('Не уникальный id: '.$Value);
                 }
-                $this->$refId[$Value] = true;
+                $this->refId[$Value] = true;
 
                 $dctTag['COMMENT'] = '#'.$Value;
             }

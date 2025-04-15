@@ -23,7 +23,7 @@ namespace Bxx\Helpers
 				if (!defined('BX_URLREWRITE')) {
 					define('BX_URLREWRITE', true);
 				}
-				\Main\Composite\Engine::setEnable(false);
+				\Bitrix\Main\Composite\Engine::setEnable(false);
 				require(\Bitrix\Main\Application::getDocumentRoot().$Page404);
 				die();
 			}

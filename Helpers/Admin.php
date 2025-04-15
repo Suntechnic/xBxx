@@ -14,7 +14,7 @@ namespace Bxx\Helpers
          */
         public static function getAdminUrlIBlockElement (int $ID, int $IBLOCK_ID=0): string
         {
-            if (!$IBLOCK_ID) $IBLOCK_ID = \Bxx\Helpers\IBlock::getIdByElementId($ID);
+            if (!$IBLOCK_ID) $IBLOCK_ID = \Bxx\Helpers\IBlocks::getIdByElementId($ID);
             return '/bitrix/admin/iblock_element_edit.php?IBLOCK_ID='.$IBLOCK_ID.'&type=equipment&ID='.$ID;
         }
 
@@ -23,6 +23,7 @@ namespace Bxx\Helpers
          */
         public static function isAdminCommandLine (): bool
         {
+            // @phpstan-ignore-next-line
             return (defined("HELP_FILE") && HELP_FILE == "utilities/php_command_line.php");
         }
         

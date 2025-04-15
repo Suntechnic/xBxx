@@ -56,6 +56,8 @@ namespace Bxx\Helpers\IBlocks\Elements
                 $Date = $dctElement['DATE_ACTIVE_FROM'];
             } elseif ($dctElement['TIMESTAMP_X']) {
                 $Date = $dctElement['DATE_ACTIVE_FROM'];
+            } else {
+                return $dctElement;
             }
 
             if (is_a($Date,'\Bitrix\Main\Type\DateTime')) {

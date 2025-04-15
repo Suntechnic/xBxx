@@ -57,6 +57,7 @@ namespace Bxx\Context {
          */
         public function set (string $Name=''): self
         {
+            if(!defined('SITE_ID')) throw new \Bitrix\Main\SystemException('Ошибка контекста Site');
             if (!$Name) {
                 $Name = SITE_ID;
                 parent::set($Name);

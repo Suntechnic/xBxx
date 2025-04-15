@@ -80,7 +80,7 @@ class E_WithDescription
      * а также сокращения количества запросов к базе
      * @param array $dctProperty - описание свойства
      * @param array $refValue - справочник значений свойства
-     * @param array $dctHTMLControlName - массив с именами контролов
+     * @param array $dctHTMLControlNamePrefix - массив с именами контролов
      * @return string
      */
     public static function GetPropertyFieldHtmlMulty (
@@ -95,7 +95,7 @@ class E_WithDescription
 
         if (count($refValue)) {
             $lstElementID = array_column($refValue, 'VALUE');
-            $refElement = static::getElementReference($lstElementID, $dctProperty['LINK_IBLOCK_ID']);
+            $refElement = self::getElementReference($lstElementID, $dctProperty['LINK_IBLOCK_ID']);
 
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // сортировка и группировка элементов
@@ -219,7 +219,7 @@ class E_WithDescription
          
         // получение информации по выбранному элементу
         if(intval($dctValue['VALUE']) > 0 && !$dctElement) {
-            $dctElement = static::getElementReference([$dctValue['VALUE']], $dctProperty['LINK_IBLOCK_ID'])[$dctValue['VALUE']];
+            $dctElement = self::getElementReference([$dctValue['VALUE']], $dctProperty['LINK_IBLOCK_ID'])[$dctValue['VALUE']];
         }
 
         if ($dctElement) {

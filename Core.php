@@ -21,7 +21,7 @@ namespace Bxx
                 }
             }
             
-            return $instance;
+            return self::$instance;
         }
         
         public static function destroy ()
@@ -39,7 +39,7 @@ namespace Bxx
         protected function __construct ()
         {
             // загружено ли ядро Bitrix
-            if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) {
+            if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) { // @phpstan-ignore-line
                 if (!$_SERVER['DOCUMENT_ROOT']) { // нет документ рут - запуск в коносоле?
                     $_SERVER['DOCUMENT_ROOT'] = realpath(__DIR__.'/../../../..');
 
