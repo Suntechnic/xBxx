@@ -218,17 +218,25 @@ class Orm
     */
     public function getHash () {
         $dir = $this->getTablesDir();
-        $hashFile = new IO\File($dir->getPath().'/hash');
+        $DirPath = $dir->getPath();
+
+        $hashFile = new IO\File($DirPath.'/hash');
+        $scriptDumpFile = new IO\File($DirPath.'/dump.sh');
         
         if ($hashFile->isExists()) {
-            $hash = $hashFile->getContents();
-            if ($hash) return $hash;
+            $Hash = $hashFile->getContents();
+            if ($Hash) return $Hash;
         }
         
         // хэша орма приложения еще нет
         $refTablesVersions = $this->refTablesVersions();
-        $hash = md5(serialize($refTablesVersions));
-        $hashFile->putContents($hash);
+
+        $Hash = md5(serialize($refTablesVersions));
+        $hashFile->putContents($Hash);
+
+        $connection = \Bitrix\Main\Application::getConnection();
+        $Cmd = 'mysqldump -u '.$connection->getLogin().' -p'.$connection->getPassword().' '.$connection->getDBName().' '.implode(' ',array_keys($refTablesVersions)).' > '.$DirPath.'/dump.sql';
+        $scriptDumpFile->putContents("#!/bin/bash\n".$Cmd);
         
         return $hash;
         
