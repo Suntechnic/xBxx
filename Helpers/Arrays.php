@@ -56,13 +56,38 @@ namespace Bxx\Helpers
 
         /**
          * создает справочник для списка по ключу $Key
+         * или множеству ключей по в том порядке в котором они указаны в $Key
          */
-        public static function referencer (array $lst, string $Key='ID'): array
+        public static function referencer (array $lst, string|array $Key='ID'): array
         {
-            return \Bxx\Helpers\Arrays::transformator(
-                    $lst,
-                    array_column($lst,$Key)
-                );
+            if (is_string($Key)) {
+                return self::transformator(
+                        $lst,
+                        array_column($lst,$Key)
+                    );
+            } else if (is_array($Key)) {
+                $lstKey = array_values($Key);
+                $Key = array_shift($lstKey);
+                if (count($lstKey)) {
+                    $ref = [];
+                    foreach ($lst as $dct) {
+                        $ref[$dct[$Key]][] = $dct;
+                    }
+                    foreach ($ref as $KeySource=>$lst) {
+                        $ref[$KeySource] = self::referencer(
+                                $lst,
+                                $lstKey
+                            );
+                    }
+                    return $ref;
+                } else {
+                    return self::transformator(
+                            $lst,
+                            array_column($lst,$Key)
+                        );
+                }
+                
+            }
         }
 
 
