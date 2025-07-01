@@ -122,14 +122,21 @@ namespace Bxx\Abstraction
         /**
          * возвращает массив Опция=>Значение
          * для опций описанных в константе OPTIONS
-         * @param array $lstCode - массив кодов опций
+         * @param array $Filter - массив кодов опций или префикс кода опций
          * @return array - массив Опция=>Значение
          * @example
          * $refOptions = Settings::getOptions(['option1','option2']);
          * $refOptions = Settings::getOptions(); // все опции определенные в конфиге
          */
-        public static function getOptions (array $lstCode=[]): array
+        public static function getOptions (array|string $Filter=null): array
         {
+            if (is_string($Filter) && $Filter) {
+                $lstCode = array_filter(array_keys(static::getOptionsInfo()), function ($Code) use ($Filter) {
+                    return strpos($Code, $Filter) === 0; // фильтруем по префиксу
+                });
+            } elseif (is_array($Filter)) {
+                $lstCode = $Filter;
+            }
             if (!$lstCode) $lstCode = array_keys(static::getOptionsInfo());
 
             $dctOptions = [];
