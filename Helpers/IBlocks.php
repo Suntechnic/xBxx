@@ -105,8 +105,27 @@ namespace Bxx\Helpers
             }
             return self::$_memoizing['refIdByCode'];
         }
-        
 
+
+        /**
+         * возвращает справочник инфоблоков
+         * 
+         * @return array - справочинк инфоблоков где ключом является ID
+         */
+        public static function refById (bool $DropCache=false): array
+        {
+            if (!self::$_memoizing['refById'] || $DropCache) {
+                $ref = \Bxx\Helpers\Arrays::referencer(self::getList($DropCache),'ID');
+                self::$_memoizing['refById'] = $ref;
+            }
+            return self::$_memoizing['refById'];
+        }
+        
+        /**
+         * возвращает список инфоблоков
+         * 
+         * @return array - список инфоблоков
+         */
         public static function getList (bool $DropCache=false): array
         {
             $cache = \Bitrix\Main\Data\Cache::createInstance();
@@ -131,6 +150,7 @@ namespace Bxx\Helpers
                             'DETAIL_PAGE_URL' => $arIblock['DETAIL_PAGE_URL'],
                             'SECTION_PAGE_URL' => $arIblock['SECTION_PAGE_URL'],
                             'VERSION' => $arIblock['VERSION'],
+                            'IBLOCK_TYPE_ID' => $arIblock['IBLOCK_TYPE_ID'],
                         ];
                 }
                 $cache->endDataCache($lst);
