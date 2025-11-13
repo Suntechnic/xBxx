@@ -173,7 +173,19 @@ namespace Bxx\Abstraction
                     static::getOptionKey($Code),
                     $dctOption['default']
                 );
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            // поддержка enum
+            if ($Value) {
+                $refEnum = static::getEnum($Code);
+                if ($refEnum && !array_key_exists($Value, $refEnum)) {
+                    $Value = $dctOption['default'];
+                }
+            }
+            // поддержка enum
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // преобразование типов
             if ($dctOption['type'] == 'bool') {
                 if ($Value == 'Y') {
@@ -192,9 +204,36 @@ namespace Bxx\Abstraction
             } elseif ($dctOption['type'] == 'string' || $dctOption['type'] == 'text') {
                 $Value = (string)$Value;
             }
+            // преобразование типов
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
             
             return $Value;
         }
+
+
+
+        /**
+         * возвращает список вариантов enum опции
+         */
+        public static function getEnum (string $Code): array
+        {
+            $dctOption = static::getOptionInfo($Code);
+            $refEnum = [];
+            if (isset($dctOption['enum']) && $dctOption['enum']) {
+                if (is_array($dctOption['enum'])) {
+                    $refEnum = $dctOption['enum'];
+                } elseif (is_string($dctOption['enum']) && class_exists($dctOption['enum'])) {
+                    if (method_exists($dctOption['enum'], 'getListOptions')) {
+                        $refEnum = $dctOption['enum']::getListOptions();
+                    }
+                }
+            }
+            return $refEnum;
+        }
+
+
+
         public static function setOption (string $Code, $Value)
         {
             $dctOption = static::getOptionInfo($Code);
