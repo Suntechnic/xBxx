@@ -296,9 +296,19 @@ namespace Bxx\Abstraction
         {
             if (!$timestamp) $timestamp = $_SERVER['REQUEST_TIME']; // если время не передано
                                                                     // наивно предположим что оно такое же как на сервере
-
+            $refOptins = static::getOptions();
+            // оставим только публичные опции
+            foreach ($refOptins as $Code=>$Value) {
+                $dctOption = static::getOptionInfo($Code);
+                if (isset($dctOption['public'])) {
+                    if (is_string($dctOption['public'])) { // это ключ 
+                        $refOptins[$dctOption['public']] = $Value;
+                        unset($refOptins[$Code]);
+                    }
+                } else unset($refOptins[$Code]);
+            }
             $arConfig = [
-                    'options' => static::getOptions(),
+                    'options' => $refOptins,
                     'env' => [
                             'stage' => defined('APPLICATION_ENV')?APPLICATION_ENV:'production',
                             'timestamp' => time(),
