@@ -97,20 +97,28 @@ namespace Bxx\Helpers\IBlocks\Elements
              */
             if (!$arParams['format']) $arParams['format'] = 'j F Y';
 
-
-            if ($dctElement['DATE_ACTIVE_FROM']) {
-                $Date = $dctElement['DATE_ACTIVE_FROM'];
-            } elseif ($dctElement['TIMESTAMP_X']) {
-                $Date = $dctElement['DATE_ACTIVE_FROM'];
+            if ($arParams['fields'] && is_array($arParams['fields'])) {
+                $lstFields = $arParams['fields'];
             } else {
-                return $dctElement;
+                $lstFields = ['DATE_ACTIVE_FROM','ACTIVE_FROM_X','ACTIVE_FROM','TIMESTAMP_X'];
             }
 
-            if (is_a($Date,'\Bitrix\Main\Type\DateTime')) {
-                $datetime = $Date;
-            } else {
-                $datetime = new \Bitrix\Main\Type\DateTime($Date);
+            foreach ($lstFields as $DateField) {
+                if ($dctElement[$DateField]) {
+                    $Date = $dctElement[$DateField];
+                    if (is_a($Date,'\Bitrix\Main\Type\DateTime')) {
+                        $datetime = $Date;
+                    } else {
+                        try {
+                            $datetime = new \Bitrix\Main\Type\DateTime($Date);
+                        } catch (\Bitrix\Main\ObjectException $e) {
+                            $datetime = new \Bitrix\Main\Type\DateTime($Date, 'Y-m-d H:i:s');
+                        }
+                    }
+                    if ($datetime) break;
+                }
             }
+            if (!isset($datetime) || !$datetime) return $dctElement;
 
             $dctElement['X_DATE'] = $datetime;
             $dctElement['X_DATE_FORMATED'] = \FormatDate($arParams['format'],$datetime->getTimestamp());
