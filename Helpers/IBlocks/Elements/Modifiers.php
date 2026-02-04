@@ -37,6 +37,52 @@ namespace Bxx\Helpers\IBlocks\Elements
             if ($dctElement['DETAIL_PICTURE']
                     && !is_array($dctElement['DETAIL_PICTURE'])
                 ) $dctElement['DETAIL_PICTURE'] = \CFile::GetFileArray($dctElement['DETAIL_PICTURE']);
+
+            if ($arParams['GALLERY']) { // если в параметрах указаны коды свойств-галерей
+                $lstGalleryProps = $arParams['GALLERY'];
+                if (!is_array($lstGalleryProps)) $lstGalleryProps = [$lstGalleryProps];
+
+                // здесь коды свойств-галерей массив
+                foreach ($lstGalleryProps as $PropCode) {
+                    // проверяем битрикс-компонентную схему
+                    if ($dctElement['PROPERTIES'][$PropCode]['VALUE']) {
+                        $dctElement['PROPERTIES'][$PropCode]['FILES'] = [];
+                        foreach ($dctElement['PROPERTIES'][$PropCode]['VALUE'] as $FileID) {
+                            $dctElement['PROPERTIES'][$PropCode]['FILES'][] = \CFile::GetFileArray($FileID);
+                        }
+                    } elseif ($dctElement['PROPERTY_'.$PropCode.'_VALUE']) {
+                        // проверяем прямую схему
+                        $dctElement['PROPERTY_'.$PropCode.'_FILES'] = [];
+                        foreach ($dctElement['PROPERTY_'.$PropCode.'_VALUE'] as $FileID) {
+                            $dctElement['PROPERTY_'.$PropCode.'_FILES'][] = \CFile::GetFileArray($FileID);
+                        }   
+                    }
+                }
+            }
+
+            if ($arParams['MAIN'] && is_string($arParams['MAIN'])) { // если в параметрах указан код в который установить главное фото
+                $MainPhotoCode = $arParams['MAIN'];
+                if ($dctElement['DETAIL_PICTURE']) {
+                    $dctElement[$MainPhotoCode] = $dctElement['DETAIL_PICTURE'];
+                } elseif ($dctElement['PREVIEW_PICTURE']) {
+                    $dctElement[$MainPhotoCode] = $dctElement['PREVIEW_PICTURE'];
+                } elseif ($lstGalleryProps) { // ни одного фото нет, пробуем взять из галерей
+                    foreach ($lstGalleryProps as $PropCode) {
+                        if ($dctElement['PROPERTIES'][$PropCode]['FILES']
+                                && count($dctElement['PROPERTIES'][$PropCode]['FILES'])>0
+                            ) {
+                            $dctElement[$MainPhotoCode] = $dctElement['PROPERTIES'][$PropCode]['FILES'][0];
+                            break;
+                        } elseif ($dctElement['PROPERTY_'.$PropCode.'_FILES']
+                                && count($dctElement['PROPERTY_'.$PropCode.'_FILES'])>0
+                            ) {
+                            $dctElement[$MainPhotoCode] = $dctElement['PROPERTY_'.$PropCode.'_FILES'][0];
+                            break;
+                        }
+                    }
+                }
+                
+            }
             
             return $dctElement;
         }
@@ -51,20 +97,28 @@ namespace Bxx\Helpers\IBlocks\Elements
              */
             if (!$arParams['format']) $arParams['format'] = 'j F Y';
 
-
-            if ($dctElement['DATE_ACTIVE_FROM']) {
-                $Date = $dctElement['DATE_ACTIVE_FROM'];
-            } elseif ($dctElement['TIMESTAMP_X']) {
-                $Date = $dctElement['DATE_ACTIVE_FROM'];
+            if ($arParams['fields'] && is_array($arParams['fields'])) {
+                $lstFields = $arParams['fields'];
             } else {
-                return $dctElement;
+                $lstFields = ['DATE_ACTIVE_FROM','ACTIVE_FROM_X','ACTIVE_FROM','TIMESTAMP_X'];
             }
 
-            if (is_a($Date,'\Bitrix\Main\Type\DateTime')) {
-                $datetime = $Date;
-            } else {
-                $datetime = new \Bitrix\Main\Type\DateTime($Date);
+            foreach ($lstFields as $DateField) {
+                if ($dctElement[$DateField]) {
+                    $Date = $dctElement[$DateField];
+                    if (is_a($Date,'\Bitrix\Main\Type\DateTime')) {
+                        $datetime = $Date;
+                    } else {
+                        try {
+                            $datetime = new \Bitrix\Main\Type\DateTime($Date);
+                        } catch (\Bitrix\Main\ObjectException $e) {
+                            $datetime = new \Bitrix\Main\Type\DateTime($Date, 'Y-m-d H:i:s');
+                        }
+                    }
+                    if ($datetime) break;
+                }
             }
+            if (!isset($datetime) || !$datetime) return $dctElement;
 
             $dctElement['X_DATE'] = $datetime;
             $dctElement['X_DATE_FORMATED'] = \FormatDate($arParams['format'],$datetime->getTimestamp());

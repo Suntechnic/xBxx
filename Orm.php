@@ -234,9 +234,9 @@ class Orm
         $Hash = md5(serialize($refTablesVersions));
         $hashFile->putContents($Hash);
 
-        $connection = \Bitrix\Main\Application::getConnection();
-        $Cmd = 'mysqldump -u '.$connection->getLogin().' -p'.$connection->getPassword().' '.$connection->getDBName().' '.implode(' ',array_keys($refTablesVersions)).' > '.$DirPath.'/dump.sql';
-        $scriptDumpFile->putContents("#!/bin/bash\n".$Cmd);
+        // $connection = \Bitrix\Main\Application::getConnection();
+        // $Cmd = 'mysqldump -u '.$connection->getLogin().' -p'.$connection->getPassword().' '.$connection->getDBName().' '.implode(' ',array_keys($refTablesVersions)).' > '.$DirPath.'/dump.sql';
+        // $scriptDumpFile->putContents("#!/bin/bash\n".$Cmd);
         
         return $hash;
         

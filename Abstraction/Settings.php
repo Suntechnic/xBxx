@@ -122,14 +122,21 @@ namespace Bxx\Abstraction
         /**
          * возвращает массив Опция=>Значение
          * для опций описанных в константе OPTIONS
-         * @param array $lstCode - массив кодов опций
+         * @param array $Filter - массив кодов опций или префикс кода опций
          * @return array - массив Опция=>Значение
          * @example
          * $refOptions = Settings::getOptions(['option1','option2']);
          * $refOptions = Settings::getOptions(); // все опции определенные в конфиге
          */
-        public static function getOptions (array $lstCode=[]): array
+        public static function getOptions (array|string $Filter=null): array
         {
+            if (is_string($Filter) && $Filter) {
+                $lstCode = array_filter(array_keys(static::getOptionsInfo()), function ($Code) use ($Filter) {
+                    return strpos($Code, $Filter) === 0; // фильтруем по префиксу
+                });
+            } elseif (is_array($Filter)) {
+                $lstCode = $Filter;
+            }
             if (!$lstCode) $lstCode = array_keys(static::getOptionsInfo());
 
             $dctOptions = [];
@@ -166,7 +173,19 @@ namespace Bxx\Abstraction
                     static::getOptionKey($Code),
                     $dctOption['default']
                 );
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            // поддержка enum
+            if ($Value) {
+                $refEnum = static::getEnum($Code);
+                if ($refEnum && !array_key_exists($Value, $refEnum)) {
+                    $Value = $dctOption['default'];
+                }
+            }
+            // поддержка enum
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // преобразование типов
             if ($dctOption['type'] == 'bool') {
                 if ($Value == 'Y') {
@@ -185,9 +204,36 @@ namespace Bxx\Abstraction
             } elseif ($dctOption['type'] == 'string' || $dctOption['type'] == 'text') {
                 $Value = (string)$Value;
             }
+            // преобразование типов
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
             
             return $Value;
         }
+
+
+
+        /**
+         * возвращает список вариантов enum опции
+         */
+        public static function getEnum (string $Code): array
+        {
+            $dctOption = static::getOptionInfo($Code);
+            $refEnum = [];
+            if (isset($dctOption['enum']) && $dctOption['enum']) {
+                if (is_array($dctOption['enum'])) {
+                    $refEnum = $dctOption['enum'];
+                } elseif (is_string($dctOption['enum']) && class_exists($dctOption['enum'])) {
+                    if (method_exists($dctOption['enum'], 'getListOptions')) {
+                        $refEnum = $dctOption['enum']::getListOptions();
+                    }
+                }
+            }
+            return $refEnum;
+        }
+
+
+
         public static function setOption (string $Code, $Value)
         {
             $dctOption = static::getOptionInfo($Code);
@@ -250,9 +296,19 @@ namespace Bxx\Abstraction
         {
             if (!$timestamp) $timestamp = $_SERVER['REQUEST_TIME']; // если время не передано
                                                                     // наивно предположим что оно такое же как на сервере
-
+            $refOptins = static::getOptions();
+            // оставим только публичные опции
+            foreach ($refOptins as $Code=>$Value) {
+                $dctOption = static::getOptionInfo($Code);
+                if (isset($dctOption['public'])) {
+                    if (is_string($dctOption['public'])) { // это ключ 
+                        $refOptins[$dctOption['public']] = $Value;
+                        unset($refOptins[$Code]);
+                    }
+                } else unset($refOptins[$Code]);
+            }
             $arConfig = [
-                    'options' => static::getOptions(),
+                    'options' => $refOptins,
                     'env' => [
                             'stage' => defined('APPLICATION_ENV')?APPLICATION_ENV:'production',
                             'timestamp' => time(),

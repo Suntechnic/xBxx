@@ -2,24 +2,26 @@
 namespace Bxx\Traits {
     trait Controller
     {
-        // private $actionsConfig;
 
         protected function init()
         {
             parent::init();
-            foreach ($this->actionsConfig as $Name=>$refConfig) {
-                
-                foreach ($refConfig as $NameFilter=>$lstConfig) {
-                    if ($NameFilter == 'prefilters') {
-                        foreach ($lstConfig as $I=>$Filter) {
-                            if (is_string($Filter)) {
-                                $refConfig[$NameFilter][$I] = new $Filter;
-                            }
+            foreach ($this->actionsConfig as $Name=>$arConfig) {
+                if ($arConfig['prefilters']) {
+                    foreach ($arConfig['prefilters'] as $I=>$FilterClass) {
+                        if (is_string($FilterClass)) {
+                            $arConfig['prefilters'][$I] = new $FilterClass;
                         }
                     }
                 }
-                
-                $this->setActionConfig($Name, $refConfig);
+                if ($arConfig['postfilters']) {
+                    foreach ($arConfig['postfilters'] as $I=>$FilterClass) {
+                        if (is_string($FilterClass)) {
+                            $arConfig['postfilters'][$I] = new $FilterClass;
+                        }
+                    }
+                }
+                $this->setActionConfig($Name, $arConfig);
             }
         }
     }

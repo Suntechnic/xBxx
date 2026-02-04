@@ -15,7 +15,9 @@ namespace Bxx\Helpers
         public static function getAdminUrlIBlockElement (int $ID, int $IBLOCK_ID=0): string
         {
             if (!$IBLOCK_ID) $IBLOCK_ID = \Bxx\Helpers\IBlocks::getIdByElementId($ID);
-            return '/bitrix/admin/iblock_element_edit.php?IBLOCK_ID='.$IBLOCK_ID.'&type=equipment&ID='.$ID;
+            // получим тип ИБ по ID
+            $IBLOCK_TYPE_ID = \Bxx\Helpers\IBlocks::refById()[$IBLOCK_ID]['IBLOCK_TYPE_ID'];
+            return '/bitrix/admin/iblock_element_edit.php?IBLOCK_ID='.$IBLOCK_ID.'&type='.$IBLOCK_TYPE_ID.'&ID='.$ID;
         }
 
         /**
