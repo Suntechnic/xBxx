@@ -11,14 +11,16 @@ namespace Bxx\Helpers\IBlocks
          * справочник свойст Enum
          * 
          */
-        public static function getEnumReference (int $IBlockId): array
+        public static function getEnumReference (int $IBlockId, int|bool $CacheTTL=false): array
         {
             $cache = \Bitrix\Main\Data\Cache::createInstance();
             $CacheKey = 'getEnumReference_'.$IBlockId;
 
-            if (defined('APPLICATION_ENV') && APPLICATION_ENV == 'dev') {
-                $CacheTTL = 0;
-            } else $CacheTTL = \Bxx\Settings::getCacheTTL();
+            if ($CacheTTL === false) {
+                if (defined('APPLICATION_ENV') && APPLICATION_ENV == 'dev') {
+                    $CacheTTL = 0;
+                } else $CacheTTL = \Bxx\Settings::getCacheTTL();
+            }
 
             $refProps = [];
 
@@ -70,6 +72,7 @@ namespace Bxx\Helpers\IBlocks
                 while ($dctEnumItem = $rdbEnum->fetch()) {
                     $refProps[$mapId2Code[$dctEnumItem['PROPERTY_ID']]]['MAPS']['ID'][$dctEnumItem['ID']] = count($refProps[$mapId2Code[$dctEnumItem['PROPERTY_ID']]]['ITEMS']);
                     $refProps[$mapId2Code[$dctEnumItem['PROPERTY_ID']]]['MAPS']['XML_ID'][$dctEnumItem['XML_ID']] = count($refProps[$mapId2Code[$dctEnumItem['PROPERTY_ID']]]['ITEMS']);
+                    $refProps[$mapId2Code[$dctEnumItem['PROPERTY_ID']]]['MAPS']['XML_ID2ID'][$dctEnumItem['XML_ID']] = intval($dctEnumItem['ID']);
                     $refProps[$mapId2Code[$dctEnumItem['PROPERTY_ID']]]['ITEMS'][] = $dctEnumItem;
                 }
 
