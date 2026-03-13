@@ -54,11 +54,12 @@ namespace Bxx\Abstraction
          * для опций описанных в константе options
          * по сути просто массив OPTIONS
          * 
+         * @var array|null $_optionsinfo - кеш описания опций, для оптимизации, чтобы не читать файлы опций на каждом запросе
          */
-        private static $_optionsinfo = false;
+        private static array|null $_optionsinfo = null;
         public static function getOptionsInfo (): array
         {
-            if (static::$_optionsinfo === false) { // @phpstan-ignore-line
+            if (static::$_optionsinfo === null) { // @phpstan-ignore-line
                 static::$_optionsinfo = static::OPTIONS; // @phpstan-ignore-line
 
                 // подключаем файлы опций
@@ -233,7 +234,12 @@ namespace Bxx\Abstraction
         }
 
 
-
+        /**
+         * устанавливает значение опции приложения по его имени
+         * значение будет преведено к типу, описанному в константе OPTIONS, если тип описан
+         * генерирует событие OnBeforeSetOption, в котором можно отменить сохранение или изменить сохраняемое значение: return new \Bitrix\Main\EventResult(\Bitrix\Main\EventResult::SUCCESS, ['value' => 'New Value']);
+         * и событие OnAfterSetOption после сохранения
+         */
         public static function setOption (string $Code, $Value)
         {
             $dctOption = static::getOptionInfo($Code);
@@ -253,11 +259,64 @@ namespace Bxx\Abstraction
                 $Value = (string)$Value;
             }
 
-            return \Bitrix\Main\Config\Option::set(
+            $ValueOld = \Bitrix\Main\Config\Option::get(
+                    static::MODULE,
+                    static::getOptionKey($Code),
+                    $dctOption['default']
+                );
+
+            if ($Value == $ValueOld) {
+                return false; // значение не изменилось, сохранять не нужно
+            }
+
+
+            ////////////////////////////////////////////////////////////////////
+            // генерция события изменения опции
+            $dctData = [
+                    'name' => $Code,
+                    'value' => $Value,
+                    'value_old' => $ValueOld,
+                    'option_info' => $dctOption
+                ];
+            $event = new \Bitrix\Main\Event(
+                    static::MODULE,
+                    'OnBeforeSetOption',
+                    $dctData
+                );
+            $event->send();
+            $arEventResult = $event->getResults();
+            foreach ($arEventResult as $eventResult) {
+                if ($eventResult->getType() == \Bitrix\Main\EventResult::ERROR) {
+                    return false;
+                } elseif ($eventResult->getType() == \Bitrix\Main\EventResult::SUCCESS) {
+                    $arParams = $eventResult->getParameters();
+                    if (isset($arParams['value'])) {
+                        $Value = $arParams['value'];
+                    }
+                }
+            }
+            // генерция события изменения опции
+            ////////////////////////////////////////////////////////////////////
+
+            \Bitrix\Main\Config\Option::set(
                     static::MODULE,
                     static::getOptionKey($Code),
                     $Value
                 );
+
+            //////////////////////////////////////////////////////////////////// 
+            // генерция события изменения опции
+            $dctData['value_new'] = $Value;
+            $event = new \Bitrix\Main\Event(
+                    static::MODULE,
+                    'OnAfterSetOption',
+                    $dctData
+                );
+            $event->send();
+            // генерция события изменения опции
+            ////////////////////////////////////////////////////////////////////
+
+            return true;
         }
         public static function set (string $Code, $Value)
         {
