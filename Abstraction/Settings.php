@@ -393,7 +393,12 @@ namespace Bxx\Abstraction
 
                 $arConfig['user'] = [
                         'id' => $arUser['ID'],
-                        'email_hash' => md5($arUser['EMAIL'])
+                        'email_hash' => md5($arUser['EMAIL']),
+                        'email' => $arUser['EMAIL'],
+                        'name' => $arUser['NAME'],
+                        'last_name' => $arUser['LAST_NAME'],
+                        'login' => $arUser['LOGIN'],
+                        'personal_phone' => $arUser['PERSONAL_PHONE'],
                     ];
             } else {
                 $arConfig['user'] = [
