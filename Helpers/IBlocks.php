@@ -18,6 +18,8 @@ namespace Bxx\Helpers
          */
         public static function getIdByElementId (int $ElementId): int
         {
+            \Bitrix\Main\Loader::includeModule('iblock');
+            
             $dctElement = \Bitrix\Iblock\ElementTable::getList([
                     'select' => ['ID','IBLOCK_ID'],
                     'filter' => ['ID' => $ElementId]
