@@ -17,9 +17,19 @@ class Orm
     
     private static $instances;
         
-    public static function getInstance(string $TablesDir='/local/php_interface/lib/App/Tables') {
+    public static function getInstance(
+            string $TablesDir='/local/php_interface/lib/App/Tables', 
+            string $Namespace = ''
+        ): self
+    {
+        if (!$Namespace) {
+            // по умолчанию пространство имен строится из папки, в которой лежат таблицы
+            $RelativeTablesDir = str_replace('/local/php_interface/lib', '', $TablesDir);
+            $Namespace = str_replace('/', '\\', $RelativeTablesDir);
+        }
+
         if (!isset(self::$instances[$TablesDir])) {
-            self::$instances[$TablesDir]= new self($TablesDir);
+            self::$instances[$TablesDir]= new self($TablesDir, $Namespace);
         }
         return self::$instances[$TablesDir];
     }
@@ -27,13 +37,15 @@ class Orm
     
     private $tablesDir;
     private $TDPathHash;
-    protected function __construct($TablesDir) {
+    private $Namespace;
+    protected function __construct(string $TablesDir, string $Namespace) {
         $FullPath = \Bitrix\Main\Application::getDocumentRoot().$TablesDir;
         $this->tablesDir = new IO\Directory($FullPath);
         if (!$this->tablesDir->isExists()) {
             throw new \Bitrix\Main\ObjectNotFoundException('Папка классов таблиц '.$FullPath.' не существует');
         }
         $this->TDPathHash = crc32($FullPath);
+        $this->Namespace = $Namespace;
     }
 
     /*
@@ -175,7 +187,7 @@ class Orm
                     $debrisFileName = explode('.',$fileName);
                     
                     if (count($debrisFileName) == 2 && $debrisFileName[1] == 'php') {
-                        $className = '\\App\\Tables\\'.$debrisFileName[0];
+                        $className = $this->Namespace.'\\'.$debrisFileName[0];
                         $lstTablesClasses[] = $className;
                     }
                     
@@ -203,10 +215,10 @@ class Orm
         if (!$this->refTablesVersions) {
             $lstTablesClasses = $this->getTablesClasses();
             $refTablesVersions = [];
-            foreach ($lstTablesClasses as $className) {
-                $entity = $className::getEntity();
+            foreach ($lstTablesClasses as $ClassName) {
+                $entity = $ClassName::getEntity();
                 $tableName = $entity->getDBTableName();
-                $refTablesVersions[$entity->getDBTableName()] = $className::VERSION;
+                $refTablesVersions[$entity->getDBTableName()] = $ClassName::VERSION;
             }
             $this->refTablesVersions = $refTablesVersions;
         }
@@ -238,7 +250,7 @@ class Orm
         // $Cmd = 'mysqldump -u '.$connection->getLogin().' -p'.$connection->getPassword().' '.$connection->getDBName().' '.implode(' ',array_keys($refTablesVersions)).' > '.$DirPath.'/dump.sql';
         // $scriptDumpFile->putContents("#!/bin/bash\n".$Cmd);
         
-        return $hash;
+        return $Hash;
         
     }
 }
