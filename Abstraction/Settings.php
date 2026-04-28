@@ -188,6 +188,7 @@ namespace Bxx\Abstraction
 
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // преобразование типов
+            if (!isset($dctOption['type'])) $dctOption['type'] = 'string';
             if ($dctOption['type'] == 'bool') {
                 if ($Value == 'Y') {
                     $Value = true;
