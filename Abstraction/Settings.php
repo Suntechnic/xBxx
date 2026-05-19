@@ -106,8 +106,11 @@ namespace Bxx\Abstraction
          */
         public static function getOptionInfo (string $Code): array
         {
-            $dctOption = static::getOptionsInfo()[$Code];
-            if (is_array($dctOption)) return $dctOption;
+            $refOptionsInfo = static::getOptionsInfo();
+            if (isset($refOptionsInfo[$Code])) {
+                $dctOption = $refOptionsInfo[$Code];
+                if (is_array($dctOption)) return $dctOption;
+            }
             return [];
         }
 
@@ -172,7 +175,7 @@ namespace Bxx\Abstraction
             $Value = \Bitrix\Main\Config\Option::get(
                     static::MODULE,
                     static::getOptionKey($Code),
-                    $dctOption['default']
+                    isset($dctOption['default'])?$dctOption['default']:null
                 );
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // поддержка enum
