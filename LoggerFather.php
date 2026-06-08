@@ -4,36 +4,47 @@ namespace Bxx;
 
 class LoggerFather {
 
-    static $instance;
+    static self $instance;
 
-    private $LogDir;
-    private $LogExt;
-    private $LogSize;
+    private string $LogDir;
+    private string $LogExt;
+    private int $LogSize;
 
-    private $LevelDefault=false;
+    private bool|string $LevelDefault=false;
 
-    private $LogDirPath;
+    private string $LogDirPath;
 
-    private $refLoggers=[];
+    private array $refLoggers=[];
 
     private const LOGDIR = '/local/.logs/';
     private const LOGEXT = '.log.txt';
     private const LOGSIZE = 8388608;
 
     // возвращает логгер
-    public function get (string $Name): \Bitrix\Main\Diag\FileLogger
+    public function get (string $Name) //: \Bitrix\Main\Diag\FileLogger
     {
+
         if (!$this->refLoggers[$Name]) {
-            $LogPath = $this->getLogDirPath().$Name.$this->LogExt;
-            $LogDirPath = dirname($LogPath);
-            if (!\Bitrix\Main\IO\Directory::isDirectoryExists($LogDirPath)) {
-                \Bitrix\Main\IO\Directory::createDirectory($LogDirPath);
+
+            if (\Bitrix\Main\Loader::includeModule('ihead.logs')) {
+                $Name = str_replace(['/', '\\'], '_', $Name);
+                $logger = new \Bxx\Logger\IHead($Name);
+            } else {
+                // файловый лог \Bitrix\Main\Diag\FileLogger
+                $LogPath = $this->getLogDirPath().$Name.$this->LogExt;
+                $LogDirPath = dirname($LogPath);
+                if (!\Bitrix\Main\IO\Directory::isDirectoryExists($LogDirPath)) {
+                    \Bitrix\Main\IO\Directory::createDirectory($LogDirPath);
+                }
+                $logger = new \Bitrix\Main\Diag\FileLogger(
+                        $LogPath,
+                        $this->LogSize
+                    );
+                
             }
-            $logger = new \Bitrix\Main\Diag\FileLogger(
-                    $LogPath,
-                    $this->LogSize
-                );
+
             if ($this->LevelDefault) $logger->setLevel($this->LevelDefault);
+            
 
             $this->refLoggers[$Name] = $logger;
         }
@@ -41,7 +52,7 @@ class LoggerFather {
         return $this->refLoggers[$Name];
     }
 
-    public function setLevelDefault ($Level)
+    public function setLevelDefault (string $Level)
     {
         return $this->LevelDefault = $Level;
     }
