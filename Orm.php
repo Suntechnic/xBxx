@@ -100,8 +100,14 @@ class Orm
                         $r = $entity->createDbTable();
                         
                         // переносим данные из временной таблицы в новую
-                        $fields = '`'.implode('`, `',array_keys($connection->getTableFields($tmp_tableName))).'`';
-                        $sql = 'INSERT INTO '.$tableName.' ('.$fields.') SELECT '.$fields.' FROM '.$tmp_tableName.';';
+                        $lstOldFields = array_keys($connection->getTableFields($tmp_tableName));
+                        $lstNewFields = array_keys($connection->getTableFields($tableName));
+
+                        // только общие поля — позволяет безопасно удалять поля из схемы
+                        $lstCommonFields = array_intersect($lstOldFields, $lstNewFields);
+
+                        $fields = '`' . implode('`, `', $lstCommonFields) . '`';
+                        $sql = 'INSERT INTO ' . $tableName . ' (' . $fields . ') SELECT ' . $fields . ' FROM ' . $tmp_tableName . ';';
                         $r = $connection->query($sql);
                         
                         // удаляем временную таблицу
