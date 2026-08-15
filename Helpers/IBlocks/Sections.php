@@ -14,6 +14,7 @@ class Sections
      */
     public static function getIdByCode (string $Code, int $IBlockId=0): int
     {
+        \Bitrix\Main\Loader::includeModule('iblock');
 
         if (!self::$_memoizing[$IBlockId][$Code]) {
             $dctFilter = array('CODE' => $Code);
@@ -43,6 +44,8 @@ class Sections
      */
     public static function getPath (int $Id): array
     {
+        \Bitrix\Main\Loader::includeModule('iblock');
+
         $ulPath = [];
         $SectionId = $Id;
         while ($dctSection = \Bitrix\Iblock\SectionTable::getList([

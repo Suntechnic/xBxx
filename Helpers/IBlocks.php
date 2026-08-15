@@ -7,6 +7,7 @@ namespace Bxx\Helpers
     {
         public const DEFAULT_PATH = 'Bxx/IBlocks';
 
+        /** @var array - массив для мемоизации данных */
         private static $_memoizing = false;
 
         /**
@@ -18,6 +19,8 @@ namespace Bxx\Helpers
          */
         public static function getIdByElementId (int $ElementId): int
         {
+            \Bitrix\Main\Loader::includeModule('iblock');
+            
             $dctElement = \Bitrix\Iblock\ElementTable::getList([
                     'select' => ['ID','IBLOCK_ID'],
                     'filter' => ['ID' => $ElementId]

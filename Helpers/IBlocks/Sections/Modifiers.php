@@ -21,9 +21,6 @@ namespace Bxx\Helpers\IBlocks\Sections
          */
         public static function illustrator (array &$dctElement): array 
         {
-            /**
-             * параметры по умолчания
-             */
             if ($dctElement['PICTURE'] 
                     && !is_array($dctElement['PICTURE'])
                 ) $dctElement['PICTURE'] = \CFile::GetFileArray($dctElement['PICTURE']);

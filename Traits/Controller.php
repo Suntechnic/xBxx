@@ -6,7 +6,17 @@ namespace Bxx\Traits {
         protected function init()
         {
             parent::init();
-            foreach ($this->actionsConfig as $name=>$arConfig) {
+            foreach ($this->actionsConfig as $Name=>$arConfig) {
+                if (defined('APPLICATION_ENV') && APPLICATION_ENV == 'dev') {
+                    // в режиме разработки всегда добавляем -prefilter с '\Bitrix\Main\Engine\ActionFilter\Csrf'
+                    if (!isset($arConfig['-prefilters'])) {
+                        $arConfig['-prefilters'] = ['\Bitrix\Main\Engine\ActionFilter\Csrf'];
+                    } elseif (!in_array('\Bitrix\Main\Engine\ActionFilter\Csrf', $arConfig['-prefilters'])) {
+                        $arConfig['-prefilters'][] = '\Bitrix\Main\Engine\ActionFilter\Csrf';
+                    }
+                }
+
+                // Инициализируем классы фильтров, если они указаны строкой, а не объектом
                 if ($arConfig['prefilters']) {
                     foreach ($arConfig['prefilters'] as $I=>$FilterClass) {
                         if (is_string($FilterClass)) {
@@ -21,7 +31,7 @@ namespace Bxx\Traits {
                         }
                     }
                 }
-                $this->setActionConfig($name, $arConfig);
+                $this->setActionConfig($Name, $arConfig);
             }
         }
     }
