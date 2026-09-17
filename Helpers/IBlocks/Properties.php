@@ -7,6 +7,75 @@ namespace Bxx\Helpers\IBlocks
     {
         public const DEFAULT_CACHE_PATH = 'Bxx/IBlocks/Properties';
 
+
+        private static $_memoizing = [];
+
+
+        /**
+         * Справочник свойств инфоблока Код=>Свойство
+         * 
+         */
+        public static function getReference (int $IBlockId, int|bool $CacheTTL=false): array
+        {
+            if (static::$_memoizing['getReference'][$IBlockId]) return static::$_memoizing['getReference'][$IBlockId];
+
+            $cache = \Bitrix\Main\Data\Cache::createInstance();
+            $CacheKey = 'getReference_'.$IBlockId;
+
+            if ($CacheTTL === false) {
+                if (defined('APPLICATION_ENV') && APPLICATION_ENV == 'dev') {
+                    $CacheTTL = 0;
+                } else $CacheTTL = \Bxx\Settings::getCacheTTL();
+            }
+
+            $refProps = [];
+
+            if ($cache->initCache($CacheTTL, $CacheKey, self::DEFAULT_CACHE_PATH)) {
+                $refProps = $cache->getVars();
+            } elseif ($cache->startDataCache()) {
+                $rdbProps = \Bitrix\Iblock\PropertyTable::getList([
+                        'order' => [
+                                'SORT' => 'ASC',
+                                'NAME' => 'ASC'
+                            ],
+                        'filter' => [
+                                'IBLOCK_ID' => $IBlockId,
+                                '!CODE' => false
+                            ],
+                        //'cache' => ['ttl' => $CacheTTL]
+                    ]);
+                while ($dctProp = $rdbProps->fetch()) {
+                    $refProps[$dctProp['CODE']] = $dctProp['ID'];
+                }
+
+                $cache->endDataCache($refProps);
+            }
+
+            static::$_memoizing['getMap'][$IBlockId] = $refProps;
+
+            return $refProps;
+
+        }
+
+
+        /**
+         * Карта свойств Код=>ID для инфоблока
+         * 
+         */
+        public static function getMap (int $IBlockId, int|bool $CacheTTL=false): array
+        {
+            if (static::$_memoizing['getMap'][$IBlockId]) return static::$_memoizing['getMap'][$IBlockId];
+
+            $refProps = self::getReference($IBlockId, $CacheTTL);
+            $mapProps = array_map(function ($id) { return $id; }, $refProps);
+
+            static::$_memoizing['getMap'][$IBlockId] = $mapProps;
+
+            return $mapProps;
+
+        }
+
+
         /**
          * справочник свойст Enum
          * 
