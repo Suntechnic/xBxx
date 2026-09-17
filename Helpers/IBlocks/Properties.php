@@ -58,23 +58,6 @@ namespace Bxx\Helpers\IBlocks
         }
 
 
-        /**
-         * Карта свойств Код=>ID для инфоблока
-         * 
-         */
-        public static function getMap (int $IBlockId, int|bool $CacheTTL=false): array
-        {
-            if (static::$_memoizing['getMap'][$IBlockId]) return static::$_memoizing['getMap'][$IBlockId];
-
-            $refProps = self::getReference($IBlockId, $CacheTTL);
-            $mapProps = array_map(function ($id) { return $id; }, $refProps);
-
-            static::$_memoizing['getMap'][$IBlockId] = $mapProps;
-
-            return $mapProps;
-
-        }
-
 
         /**
          * справочник свойст Enum
