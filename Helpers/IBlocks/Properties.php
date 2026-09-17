@@ -45,7 +45,7 @@ namespace Bxx\Helpers\IBlocks
                         //'cache' => ['ttl' => $CacheTTL]
                     ]);
                 while ($dctProp = $rdbProps->fetch()) {
-                    $refProps[$dctProp['CODE']] = $dctProp['ID'];
+                    $refProps[$dctProp['CODE']] = $dctProp;
                 }
 
                 $cache->endDataCache($refProps);
