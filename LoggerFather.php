@@ -23,7 +23,7 @@ class LoggerFather {
     // возвращает логгер
     public function get (string $Name): \Bitrix\Main\Diag\FileLogger
     {
-        if (!$this->refLoggers[$Name]) {
+        if (!isset($this->refLoggers[$Name])) {
             $LogPath = $this->getLogDirPath().$Name.$this->LogExt;
             $LogDirPath = dirname($LogPath);
             if (!\Bitrix\Main\IO\Directory::isDirectoryExists($LogDirPath)) {
