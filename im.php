@@ -58,7 +58,8 @@ class im
                     ],
                 ]);
 
-            $ChanelClass = '\Bxx\im\\'.static::CHANELS[$Chanel];
+            $ChanelCode = static::CHANELS[$Chanel];
+            $ChanelClass = '\Bxx\im\\'.$ChanelCode;
 
             while ($dctTmplEvents = $rdb->fetch())
             {
@@ -67,11 +68,11 @@ class im
                 $Subject = static::replace($dctTmplEvents['SUBJECT'], $dctFields);
                 $Message = static::replace($dctTmplEvents['MESSAGE'], $dctFields);
 
-                // здесь псевдоним $To должен быть обменян на секрет
-                
-                
+                // здесь псевдоним $dctTmplEvents['EMAIL_FROM'] должен быть обменян на секрет
+                $Secret = \Bxx\Settings\SecretProvider::get($ChanelCode, $dctTmplEvents['EMAIL_FROM']);
+
                 // тут отправка
-                $chanel = new $ChanelClass($dctTmplEvents['EMAIL_FROM']);
+                $chanel = new $ChanelClass($Secret);
                 if ($logger) {
                     $chanel->setLogger($logger);
                 }
