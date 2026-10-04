@@ -37,7 +37,7 @@ class Telegram
         
         if (str_starts_with($Message, 'Text:')) {
             $parseMode = 'MarkdownV2';
-            $Message = substr($Message, strlen('MarkdownV2:'));
+            $Message = substr($Message, strlen('Text:'));
             $Message = static::escape($Message);
         } elseif (str_starts_with($Message, 'MarkdownV2:')) {
             $parseMode = 'MarkdownV2';
@@ -83,7 +83,6 @@ class Telegram
                             'chanel' => $ChatId
                         ]);
                 }
-                $Success = false;
             } else {
                 if ($logger) {
                     $logger->error("\n[{date}] ERROR Ошибка отправки {chanel} \n{responce}",[
@@ -91,6 +90,7 @@ class Telegram
                             'responce' => $response
                         ]);
                 }
+                $Success = false;
             }
         }
 
