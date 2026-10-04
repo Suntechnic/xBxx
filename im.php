@@ -9,6 +9,17 @@ class im
             'telegram.org' => 'Telegram'
         ];
 
+    private static $logger;
+    public static function getLogger (): ?\Bitrix\Main\Diag\FileLogger
+    {
+        return static::$logger;
+    }
+    public static function setLogger (\Bitrix\Main\Diag\FileLogger $logger): \Bitrix\Main\Diag\FileLogger
+    {
+        static::$logger = $logger;
+        return static::$logger;
+    }
+
 
     public static function handler (
             string &$EventName, 
@@ -33,6 +44,9 @@ class im
     {
 
         if (!isset(static::CHANELS[$Chanel])) return false;
+
+        if (!$logger) $logger = static::getLogger();
+        
 
         try {
             $rdb = \Bitrix\Main\Mail\Internal\EventMessageTable::getList([
@@ -63,6 +77,10 @@ class im
 
             while ($dctTmplEvents = $rdb->fetch())
             {
+
+                if ($logger) {
+                    $logger->error("\n[{date}] Шаблон: ".$dctTmplEvents['ID']);
+                }
                 
                 $To = static::replace($dctTmplEvents['EMAIL_TO'], $dctFields);
                 $Subject = static::replace($dctTmplEvents['SUBJECT'], $dctFields);
