@@ -66,6 +66,9 @@ class im
                 $To = static::replace($dctTmplEvents['EMAIL_TO'], $dctFields);
                 $Subject = static::replace($dctTmplEvents['SUBJECT'], $dctFields);
                 $Message = static::replace($dctTmplEvents['MESSAGE'], $dctFields);
+
+                // здесь псевдоним $To должен быть обменян на секрет
+                
                 
                 // тут отправка
                 $chanel = new $ChanelClass($dctTmplEvents['EMAIL_FROM']);

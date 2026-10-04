@@ -45,6 +45,7 @@ class Telegram
         } elseif (str_starts_with($Message, 'HTML:')) {
             $parseMode = 'HTML';
             $Message = substr($Message, strlen('HTML:'));
+            $Message = static::escapeHtml($Message);
         } else {
             $parseMode = 'HTML';
         }
@@ -153,5 +154,11 @@ class Telegram
                 '\\\\$1',
                 $Text
             );
+    }
+
+
+    public static function escapeHtml(string $text): string
+    {
+        return htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
     }
 }
