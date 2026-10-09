@@ -51,13 +51,20 @@ class Telegram
         }
 
         $lstChatIds = preg_split('/[\s,]+/', trim($To), -1, PREG_SPLIT_NO_EMPTY);
-
+        
+        $logger = $this->getLogger();
+        
         if (empty($lstChatIds)) {
+            if ($logger) {
+                $logger->error("\n[{date}] ERROR: некуда отправлять {chanel}",[
+                        'chanel' => $lstChatIds
+                    ]);
+            }
             return false;
         }
 
         $httpClient = $this->getClient();
-        $logger = $this->getLogger();
+        
         $Success = true;
 
         foreach ($lstChatIds as $ChatId) {
