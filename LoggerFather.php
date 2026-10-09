@@ -23,24 +23,11 @@ class LoggerFather {
     // возвращает логгер
     public function get (string $Name) //: \Bitrix\Main\Diag\FileLogger
     {
-
-        if (!$this->refLoggers[$Name]) {
-
-            if (\Bitrix\Main\Loader::includeModule('ihead.logs')) {
-                $Name = str_replace(['/', '\\'], '_', $Name);
-                $logger = new \Bxx\Logger\IHead($Name);
-            } else {
-                // файловый лог \Bitrix\Main\Diag\FileLogger
-                $LogPath = $this->getLogDirPath().$Name.$this->LogExt;
-                $LogDirPath = dirname($LogPath);
-                if (!\Bitrix\Main\IO\Directory::isDirectoryExists($LogDirPath)) {
-                    \Bitrix\Main\IO\Directory::createDirectory($LogDirPath);
-                }
-                $logger = new \Bitrix\Main\Diag\FileLogger(
-                        $LogPath,
-                        $this->LogSize
-                    );
-                
+        if (!isset($this->refLoggers[$Name])) {
+            $LogPath = $this->getLogDirPath().$Name.$this->LogExt;
+            $LogDirPath = dirname($LogPath);
+            if (!\Bitrix\Main\IO\Directory::isDirectoryExists($LogDirPath)) {
+                \Bitrix\Main\IO\Directory::createDirectory($LogDirPath);
             }
 
             if ($this->LevelDefault) $logger->setLevel($this->LevelDefault);
