@@ -68,6 +68,20 @@ namespace Bxx\Helpers
             }
             return self::$_memoizing['getIdByCode'][$Code];
         }
+
+
+        /**
+         * Возращает сущность по фильтру по фильтру
+         * !!! (метод без мемоизации)
+         * 
+         */
+        public static function getEntity (array $dctFilter): \Bitrix\Main\ORM\Entity
+        {
+            \Bitrix\Main\Loader::includeModule('highloadblock');
+            $dctHLBlockData = self::getHLBlockData($dctFilter);
+            $entity = \Bitrix\Highloadblock\HighloadBlockTable::compileEntity($dctHLBlockData);
+            return $entity;
+        }
         
         /**
          * Возращает класс по фильтру
@@ -76,11 +90,7 @@ namespace Bxx\Helpers
          */
         public static function getEntityClass (array $dctFilter): string
         {
-            \Bitrix\Main\Loader::includeModule('highloadblock');
-            $dctHLBlockData = self::getHLBlockData($dctFilter);
-
-            //$hlBlock = \Bitrix\Highloadblock\HighloadBlockTable::getById($dctHLBlockData['ID'])->fetch();
-            $entity = \Bitrix\Highloadblock\HighloadBlockTable::compileEntity($dctHLBlockData);
+            $entity =static::getEntity($dctFilter);
             $class = $entity->getDataClass();
             return $class;
         }
