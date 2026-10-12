@@ -36,18 +36,18 @@ class Telegram
 
         
         if (str_starts_with($Message, 'Text:')) {
-            $parseMode = 'MarkdownV2';
+            $ParseMode = 'MarkdownV2';
             $Message = substr($Message, strlen('Text:'));
             $Message = static::escape($Message);
         } elseif (str_starts_with($Message, 'MarkdownV2:')) {
-            $parseMode = 'MarkdownV2';
+            $ParseMode = 'MarkdownV2';
             $Message = substr($Message, strlen('MarkdownV2:'));
         } elseif (str_starts_with($Message, 'HTML:')) {
-            $parseMode = 'HTML';
+            $ParseMode = 'HTML';
             $Message = substr($Message, strlen('HTML:'));
-            $Message = static::escapeHtml($Message);
+            //$Message = static::escapeHtml($Message);
         } else {
-            $parseMode = 'HTML';
+            $ParseMode = 'HTML';
         }
 
         $lstChatIds = preg_split('/[\s,]+/', trim($To), -1, PREG_SPLIT_NO_EMPTY);
@@ -78,8 +78,10 @@ class Telegram
             $dctSendData = [
                     'chat_id'    => $ChatId,
                     'text'       => $Message,
-                    'parse_mode' => $parseMode,
+                    'parse_mode' => $ParseMode,
                 ];
+
+            //$logger?->debug("\n[{date}] Сообщение подготовлено {parse_mode} {text}",$dctSendData);
 
             $response = $httpClient->post($Url, $dctSendData);
 

@@ -89,12 +89,15 @@ class im
                 // здесь псевдоним $dctTmplEvents['EMAIL_FROM'] должен быть обменян на секрет
                 $Secret = \Bxx\Settings\SecretProvider::get($ChanelCode, $dctTmplEvents['EMAIL_FROM']);
 
-                // тут отправка
-                $chanel = new $ChanelClass($Secret);
-                if ($logger) {
-                    $chanel->setLogger($logger);
+                if ($Secret) {
+                    // тут отправка
+                    $chanel = new $ChanelClass($Secret);
+                    if ($logger) $chanel->setLogger($logger);
+                    $chanel->send($To,$Subject,$Message);
+                } else {
+                    $logger?->error("\n[{date}] ERROR: Не найден секрет для канала ".$ChanelCode." и псевдонима ".$dctTmplEvents['EMAIL_FROM']);
                 }
-                $chanel->send($To,$Subject,$Message);
+                
             }
         } catch (\Exception $e) {
             if ($logger) {
