@@ -76,6 +76,7 @@ class Telegram
 
             $response = $httpClient->post($Url, $dctSendData);
 
+            
             $dctResponse = is_string($response) ? json_decode($response, true) : null;
 
             if (is_array($dctResponse) && !empty($dctResponse['ok'])) {
@@ -86,9 +87,13 @@ class Telegram
                 }
             } else {
                 if ($logger) {
-                    $logger->error("\n[{date}] ERROR Ошибка отправки {chanel} \n{responce}",[
+                    $logger->error("\n[{date}] ERROR Ошибка отправки {chanel}\t\n{response}\t\nStatus: {status}\t\nError: {error}\t\nHeaders: {headers}\t\nLen: {len}",[
                             'chanel' => $ChatId,
-                            'responce' => $response
+                            'status'    => $httpClient->getStatus(),   // 0 при обрыве/таймауте
+                            'error'     => print_r($httpClient->getError(), true), // socketTimeout/connect/...
+                            'headers'   => print_r($httpClient->getHeaders(), true),
+                            'len'       => is_string($response) ? strlen($response) : -1,
+                            'response' => $response
                         ]);
                 }
                 $Success = false;
