@@ -38,14 +38,14 @@ class Telegram
         if (str_starts_with($Message, 'Text:')) {
             $ParseMode = 'MarkdownV2';
             $Message = substr($Message, strlen('Text:'));
-            $Message = static::escape($Message);
         } elseif (str_starts_with($Message, 'MarkdownV2:')) {
             $ParseMode = 'MarkdownV2';
             $Message = substr($Message, strlen('MarkdownV2:'));
+            //$Message = static::escape($Message);
         } elseif (str_starts_with($Message, 'HTML:')) {
             $ParseMode = 'HTML';
             $Message = substr($Message, strlen('HTML:'));
-            //$Message = static::escapeHtml($Message);
+            $Message = static::sanitizeHtml($Message);
         } else {
             $ParseMode = 'HTML';
         }
@@ -171,8 +171,82 @@ class Telegram
     }
 
 
-    public static function escapeHtml(string $text): string
+    public static function sanitizeHtml(string $Html): string
     {
-        return htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $dom = new \DOMDocument('1.0', 'UTF-8');
+
+        $previous = libxml_use_internal_errors(true);
+
+        try {
+            $dom->loadHTML(
+                '<?xml encoding="UTF-8"><html><body>' . $Html . '</body></html>',
+                LIBXML_NONET | LIBXML_NOERROR | LIBXML_NOWARNING
+            );
+        } finally {
+            libxml_clear_errors();
+            libxml_use_internal_errors($previous);
+        }
+
+        $allowed = [
+            'b', 'strong', 'i', 'em', 'u', 'ins',
+            's', 'strike', 'del', 'code', 'pre',
+        ];
+
+        $escape = static fn(string $text): string =>
+            htmlspecialchars(
+                $text,
+                ENT_QUOTES | ENT_SUBSTITUTE,
+                'UTF-8'
+            );
+
+        $render = static function (
+            \DOMNode $node,
+            bool $plain = false
+        ) use (&$render, $allowed, $escape): string {
+            if ($node instanceof \DOMText) {
+                return $escape($node->nodeValue);
+            }
+
+            if (!$node instanceof \DOMElement) {
+                return '';
+            }
+
+            $tag = strtolower($node->tagName);
+
+            if (in_array($tag, ['script', 'style'], true)) {
+                return '';
+            }
+
+            if ($tag === 'br') {
+                return "\n";
+            }
+
+            $keep = !$plain && in_array($tag, $allowed, true);
+            $insideCode = $plain || in_array($tag, ['code', 'pre'], true);
+
+            $content = '';
+
+            foreach ($node->childNodes as $child) {
+                $content .= $render($child, $insideCode);
+            }
+
+            // Не сохраняем вложенное форматирование внутри code/pre.
+            if ($keep && $content !== '') {
+                return "<{$tag}>{$content}</{$tag}>";
+            }
+
+            return $content;
+        };
+
+        $result = '';
+        $body = $dom->getElementsByTagName('body')->item(0);
+
+        if ($body) {
+            foreach ($body->childNodes as $node) {
+                $result .= $render($node);
+            }
+        }
+
+        return $result;
     }
 }
