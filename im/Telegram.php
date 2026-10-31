@@ -48,6 +48,8 @@ class Telegram
             $Message = static::sanitizeHtml($Message);
         } else {
             $ParseMode = 'HTML';
+            $Message = static::sanitizeHtml($Message);
+            $Message = htmlspecialchars($Message, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         }
 
         $lstChatIds = preg_split('/[\s,]+/', trim($To), -1, PREG_SPLIT_NO_EMPTY);
