@@ -146,6 +146,7 @@ namespace Bxx\Helpers
             } elseif ($cache->startDataCache() || $DropCache) {
                 \Bitrix\Main\Loader::includeModule('iblock');
                 $res = \CIBlock::GetList([], []);
+
                 while ($arIblock = $res->Fetch()) {
                     $lst[] = [
                             'ID' => $arIblock['ID'],
@@ -154,6 +155,7 @@ namespace Bxx\Helpers
                             'SECTION_PAGE_URL' => $arIblock['SECTION_PAGE_URL'],
                             'VERSION' => $arIblock['VERSION'],
                             'IBLOCK_TYPE_ID' => $arIblock['IBLOCK_TYPE_ID'],
+                            'LID' => $arIblock['LID']
                         ];
                 }
                 $cache->endDataCache($lst);
